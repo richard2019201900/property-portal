@@ -37,9 +37,99 @@
         .review-card {
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
         }
+
+        /* Lightbox Styles */
+        .lightbox {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .lightbox.active {
+            display: flex;
+        }
+        
+        .lightbox-content {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            animation: zoomIn 0.3s ease;
+        }
+        
+        @keyframes zoomIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .lightbox-btn {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            color: white;
+            border: none;
+            padding: 20px;
+            cursor: pointer;
+            font-size: 24px;
+            transition: all 0.3s;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .lightbox-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+        
+        .lightbox-close {
+            top: 20px;
+            right: 20px;
+        }
+        
+        .lightbox-prev {
+            left: 20px;
+        }
+        
+        .lightbox-next {
+            right: 20px;
+        }
+        
+        .property-image-clickable {
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .property-image-clickable:hover {
+            opacity: 0.9;
+            transform: scale(1.02);
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-gray-50 to-gray-100">
+    <!-- Image Lightbox -->
+    <div id="lightbox" class="lightbox">
+        <button onclick="closeLightbox()" class="lightbox-btn lightbox-close">✕</button>
+        <button onclick="prevImage()" class="lightbox-btn lightbox-prev">‹</button>
+        <img id="lightboxImage" class="lightbox-content" src="" alt="Property Image">
+        <button onclick="nextImage()" class="lightbox-btn lightbox-next">›</button>
+    </div>
+
     <!-- Login Modal -->
     <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center hidden">
         <div class="glass-effect rounded-2xl shadow-2xl p-10 max-w-md w-full mx-4 transform transition-all">
@@ -648,6 +738,8 @@
         let currentUser = null;
         let currentPropertyId = null;
         let reviews = {}; // Store reviews by property ID
+        let currentImageIndex = 0;
+        let currentImages = [];
 
         // Initialize reviews from localStorage
         function loadReviews() {
@@ -660,6 +752,39 @@
         function saveReviews() {
             localStorage.setItem('propertyReviews', JSON.stringify(reviews));
         }
+
+        // Lightbox Functions
+        function openLightbox(images, index) {
+            currentImages = images;
+            currentImageIndex = index;
+            document.getElementById('lightboxImage').src = images[index];
+            document.getElementById('lightbox').classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.remove('active');
+            document.body.style.overflow = ''; // Restore scrolling
+        }
+
+        function nextImage() {
+            currentImageIndex = (currentImageIndex + 1) % currentImages.length;
+            document.getElementById('lightboxImage').src = currentImages[currentImageIndex];
+        }
+
+        function prevImage() {
+            currentImageIndex = (currentImageIndex - 1 + currentImages.length) % currentImages.length;
+            document.getElementById('lightboxImage').src = currentImages[currentImageIndex];
+        }
+
+        // Keyboard navigation for lightbox
+        document.addEventListener('keydown', function(e) {
+            if (!document.getElementById('lightbox').classList.contains('active')) return;
+            
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowRight') nextImage();
+            if (e.key === 'ArrowLeft') prevImage();
+        });
 
         // Navigation Functions
         function goHome() {
@@ -864,7 +989,9 @@
                 <!-- Image Gallery -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-6">
                     ${property.images.map((img, index) => `
-                        <img src="${img}" alt="${property.title} - Image ${index + 1}" class="w-full h-80 object-cover rounded-xl shadow-lg ${index === 0 ? 'md:col-span-2' : ''}">
+                        <img src="${img}" alt="${property.title} - Image ${index + 1}" 
+                             onclick="openLightbox(${JSON.stringify(property.images)}, ${index})" 
+                             class="property-image-clickable w-full h-80 object-cover rounded-xl shadow-lg ${index === 0 ? 'md:col-span-2' : ''}">
                     `).join('')}
                 </div>
 
