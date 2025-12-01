@@ -16,9 +16,9 @@
         }
         
         .glass-effect {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(17, 24, 39, 0.85);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .property-card {
@@ -27,7 +27,7 @@
         
         .property-card:hover {
             transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         }
         
         .badge {
@@ -35,7 +35,8 @@
         }
         
         .review-card {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         /* Lightbox Styles */
@@ -76,7 +77,7 @@
         
         .lightbox-btn {
             position: absolute;
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             color: white;
             border: none;
@@ -93,7 +94,7 @@
         }
         
         .lightbox-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.2);
             transform: scale(1.1);
         }
         
@@ -130,7 +131,7 @@
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(0, 0, 0, 0.6);
             border: none;
             width: 40px;
             height: 40px;
@@ -142,8 +143,8 @@
             z-index: 10;
             font-size: 20px;
             font-weight: bold;
-            color: #667eea;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            color: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
             transition: all 0.3s;
             opacity: 0;
         }
@@ -153,7 +154,7 @@
         }
 
         .carousel-arrow:hover {
-            background: white;
+            background: rgba(0, 0, 0, 0.8);
             transform: translateY(-50%) scale(1.1);
         }
 
@@ -188,9 +189,24 @@
             width: 20px;
             border-radius: 4px;
         }
+
+        /* Custom Scrollbar for Dark Mode */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #111827; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4b5563; 
+            border-radius: 5px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6b7280; 
+        }
     </style>
 </head>
-<body class="bg-gradient-to-br from-gray-50 to-gray-100">
+<body class="bg-gradient-to-br from-gray-900 to-gray-800 min-h-screen text-gray-100">
     <!-- Image Lightbox -->
     <div id="lightbox" class="lightbox">
         <button onclick="closeLightbox()" class="lightbox-btn lightbox-close">✕</button>
@@ -200,17 +216,17 @@
     </div>
 
     <!-- Rental Modal - Copy to Text -->
-    <div id="rentalModal" class="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center hidden">
-        <div class="glass-effect rounded-2xl shadow-2xl p-10 max-w-lg w-full mx-4 transform transition-all max-h-screen overflow-y-auto">
+    <div id="rentalModal" class="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center hidden">
+        <div class="glass-effect rounded-2xl shadow-2xl p-10 max-w-lg w-full mx-4 transform transition-all max-h-screen overflow-y-auto border border-gray-700">
             <h2 class="text-3xl font-black bg-gradient-to-r from-purple-500 to-blue-600 bg-clip-text text-transparent mb-4 text-center">Rent This Property</h2>
-            <p id="rentalPropertyName" class="text-xl font-bold text-gray-800 mb-4 text-center"></p>
-            <p class="text-gray-600 mb-6 text-center font-medium">Text our team directly to inquire about renting! Copy the number and message below.</p>
+            <p id="rentalPropertyName" class="text-xl font-bold text-gray-200 mb-4 text-center"></p>
+            <p class="text-gray-400 mb-6 text-center font-medium">Text our team directly to inquire about renting! Copy the number and message below.</p>
             
             <!-- Phone Number Section -->
             <div class="mb-6">
-                <label class="block text-gray-700 font-bold mb-3">📱 Our Team's Number:</label>
+                <label class="block text-gray-300 font-bold mb-3">📱 Our Team's Number:</label>
                 <div class="flex items-center gap-3">
-                    <input type="text" id="rentalPhoneNumber" value="2057028233" readonly class="flex-1 px-4 py-3 border-2 border-gray-200 rounded-xl bg-gray-50 font-bold text-lg text-gray-800">
+                    <input type="text" id="rentalPhoneNumber" value="2057028233" readonly class="flex-1 px-4 py-3 border-2 border-gray-600 rounded-xl bg-gray-700 font-bold text-lg text-white">
                     <button onclick="copyRentalPhone()" id="copyRentalPhoneBtn" class="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-xl font-bold hover:opacity-90 transition shadow-lg">
                         Copy
                     </button>
@@ -219,36 +235,36 @@
             
             <!-- Pre-written Message Section -->
             <div class="mb-6">
-                <label class="block text-gray-700 font-bold mb-3">💬 Your Message (ready to paste):</label>
-                <textarea id="rentalMessage" readonly rows="4" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-gray-50 font-medium text-gray-800"></textarea>
+                <label class="block text-gray-300 font-bold mb-3">💬 Your Message (ready to paste):</label>
+                <textarea id="rentalMessage" readonly rows="4" class="w-full px-4 py-3 border-2 border-gray-600 rounded-xl bg-gray-700 font-medium text-white"></textarea>
                 <button onclick="copyRentalMessage()" id="copyRentalMessageBtn" class="w-full mt-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-xl font-bold hover:opacity-90 transition shadow-lg">
                     Copy Message
                 </button>
             </div>
             
             <!-- Encouragement -->
-            <div class="bg-gradient-to-r from-purple-100 to-blue-100 p-4 rounded-xl mb-6 text-center">
-                <p class="text-purple-800 font-bold">⚡ Text for the fastest response!</p>
-                <p class="text-purple-700 text-sm mt-1">Our team typically responds within minutes.</p>
-                <p class="text-gray-600 text-xs mt-2">⏰ Please allow up to 24 hours for a response during busy periods.</p>
+            <div class="bg-gradient-to-r from-purple-900 to-blue-900 p-4 rounded-xl mb-6 text-center border border-purple-700">
+                <p class="text-purple-200 font-bold">⚡ Text for the fastest response!</p>
+                <p class="text-purple-300 text-sm mt-1">Our team typically responds within minutes.</p>
+                <p class="text-gray-400 text-xs mt-2">⏰ Please allow up to 24 hours for a response during busy periods.</p>
             </div>
             
-            <button onclick="closeRentalModal()" class="w-full bg-gray-200 text-gray-700 px-8 py-4 rounded-xl font-bold hover:bg-gray-300 transition shadow-lg">Close</button>
+            <button onclick="closeRentalModal()" class="w-full bg-gray-700 text-gray-200 px-8 py-4 rounded-xl font-bold hover:bg-gray-600 transition shadow-lg">Close</button>
         </div>
     </div>
 
     <!-- Offer Modal - Copy to Text -->
-    <div id="offerModal" class="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center hidden">
-        <div class="glass-effect rounded-2xl shadow-2xl p-10 max-w-lg w-full mx-4 transform transition-all max-h-screen overflow-y-auto">
+    <div id="offerModal" class="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center hidden">
+        <div class="glass-effect rounded-2xl shadow-2xl p-10 max-w-lg w-full mx-4 transform transition-all max-h-screen overflow-y-auto border border-gray-700">
             <h2 class="text-3xl font-black bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent mb-4 text-center">Make an Offer</h2>
-            <p id="offerPropertyName" class="text-xl font-bold text-gray-800 mb-4 text-center"></p>
-            <p class="text-gray-600 mb-6 text-center font-medium">Text our team directly to make an offer! Copy the number and message below.</p>
+            <p id="offerPropertyName" class="text-xl font-bold text-gray-200 mb-4 text-center"></p>
+            <p class="text-gray-400 mb-6 text-center font-medium">Text our team directly to make an offer! Copy the number and message below.</p>
             
             <!-- Phone Number Section -->
             <div class="mb-6">
-                <label class="block text-gray-700 font-bold mb-3">📱 Our Team's Number:</label>
+                <label class="block text-gray-300 font-bold mb-3">📱 Our Team's Number:</label>
                 <div class="flex items-center gap-3">
-                    <input type="text" id="phoneNumber" value="2057028233" readonly class="flex-1 px-4 py-3 border-2 border-gray-200 rounded-xl bg-gray-50 font-bold text-lg text-gray-800">
+                    <input type="text" id="phoneNumber" value="2057028233" readonly class="flex-1 px-4 py-3 border-2 border-gray-600 rounded-xl bg-gray-700 font-bold text-lg text-white">
                     <button onclick="copyPhone()" id="copyPhoneBtn" class="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-xl font-bold hover:opacity-90 transition shadow-lg">
                         Copy
                     </button>
@@ -257,29 +273,29 @@
             
             <!-- Pre-written Message Section -->
             <div class="mb-6">
-                <label class="block text-gray-700 font-bold mb-3">💬 Your Message (ready to paste):</label>
-                <textarea id="offerMessage" readonly rows="4" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-gray-50 font-medium text-gray-800"></textarea>
+                <label class="block text-gray-300 font-bold mb-3">💬 Your Message (ready to paste):</label>
+                <textarea id="offerMessage" readonly rows="4" class="w-full px-4 py-3 border-2 border-gray-600 rounded-xl bg-gray-700 font-medium text-white"></textarea>
                 <button onclick="copyMessage()" id="copyMessageBtn" class="w-full mt-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-xl font-bold hover:opacity-90 transition shadow-lg">
                     Copy Message
                 </button>
             </div>
             
             <!-- Encouragement -->
-            <div class="bg-gradient-to-r from-amber-100 to-orange-100 p-4 rounded-xl mb-6 text-center">
-                <p class="text-amber-800 font-bold">⚡ Text for the fastest response!</p>
-                <p class="text-amber-700 text-sm mt-1">Our team typically responds within minutes.</p>
-                <p class="text-gray-600 text-xs mt-2">⏰ Please allow up to 24 hours for a response during busy periods.</p>
+            <div class="bg-gradient-to-r from-amber-900 to-orange-900 p-4 rounded-xl mb-6 text-center border border-amber-700">
+                <p class="text-amber-200 font-bold">⚡ Text for the fastest response!</p>
+                <p class="text-amber-300 text-sm mt-1">Our team typically responds within minutes.</p>
+                <p class="text-gray-400 text-xs mt-2">⏰ Please allow up to 24 hours for a response during busy periods.</p>
             </div>
             
-            <button onclick="closeOfferModal()" class="w-full bg-gray-200 text-gray-700 px-8 py-4 rounded-xl font-bold hover:bg-gray-300 transition shadow-lg">Close</button>
+            <button onclick="closeOfferModal()" class="w-full bg-gray-700 text-gray-200 px-8 py-4 rounded-xl font-bold hover:bg-gray-600 transition shadow-lg">Close</button>
         </div>
     </div>
 
     <!-- Login Modal -->
-    <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center hidden">
-        <div class="glass-effect rounded-2xl shadow-2xl p-10 max-w-md w-full mx-4 transform transition-all">
-            <h2 class="text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-6 text-center">Welcome to Pauly's Property Hub</h2>
-            <p class="text-gray-600 mb-8 text-center font-medium">Please select your login type</p>
+    <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center hidden">
+        <div class="glass-effect rounded-2xl shadow-2xl p-10 max-w-md w-full mx-4 transform transition-all border border-gray-700">
+            <h2 class="text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-6 text-center">Welcome to Pauly's Property Portal</h2>
+            <p class="text-gray-300 mb-8 text-center font-medium">Please select your login type</p>
             <div class="space-y-4">
                 <button onclick="loginAsOwner()" class="w-full gradient-bg text-white px-6 py-4 rounded-xl font-semibold hover:opacity-90 transition flex items-center justify-center space-x-3 shadow-lg">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -294,29 +310,29 @@
                     <span>Property Renter</span>
                 </button>
             </div>
-            <button onclick="closeLoginModal()" class="w-full mt-6 text-gray-600 hover:text-gray-800 font-semibold transition">Close</button>
+            <button onclick="closeLoginModal()" class="w-full mt-6 text-gray-400 hover:text-gray-200 font-semibold transition">Close</button>
         </div>
     </div>
 
     <!-- Navigation -->
-    <nav class="glass-effect shadow-xl sticky top-0 z-40">
+    <nav class="glass-effect shadow-xl sticky top-0 z-40 border-b border-gray-700">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
                 <div class="flex items-center space-x-3 cursor-pointer" onclick="goHome()">
-                    <div class="gradient-bg w-12 h-12 rounded-xl flex items-center justify-center font-black text-white text-lg shadow-lg">
-                        P³
+                    <div class="gradient-bg w-20 h-12 rounded-xl flex items-center justify-center font-black text-white text-xl shadow-lg">
+                        PPP
                     </div>
-                    <h1 class="text-3xl font-black bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">Pauly's Property Portal</h1>
+                    <h1 class="text-3xl md:text-4xl font-black bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent tracking-tight">Pauly's Property Portal</h1>
                 </div>
                 <div class="hidden md:flex space-x-8">
-                    <a onclick="navigateTo('home')" class="nav-link text-gray-700 hover:text-purple-600 font-semibold cursor-pointer transition">Home</a>
-                    <a onclick="navigateTo('properties')" class="nav-link text-gray-700 hover:text-purple-600 font-semibold cursor-pointer transition">Properties</a>
-                    <a onclick="navigateTo('about')" class="nav-link text-gray-700 hover:text-purple-600 font-semibold cursor-pointer transition">About</a>
-                    <a onclick="navigateTo('contact')" class="nav-link text-gray-700 hover:text-purple-600 font-semibold cursor-pointer transition">Contact</a>
+                    <a onclick="navigateTo('home')" class="nav-link text-gray-300 hover:text-purple-400 font-semibold cursor-pointer transition">Home</a>
+                    <a onclick="navigateTo('properties')" class="nav-link text-gray-300 hover:text-purple-400 font-semibold cursor-pointer transition">Properties</a>
+                    <a onclick="navigateTo('about')" class="nav-link text-gray-300 hover:text-purple-400 font-semibold cursor-pointer transition">About</a>
+                    <a onclick="navigateTo('contact')" class="nav-link text-gray-300 hover:text-purple-400 font-semibold cursor-pointer transition">Contact</a>
                 </div>
                 <div class="flex items-center space-x-4">
                     <button onclick="openLoginModal()" class="hidden md:block gradient-bg text-white px-6 py-3 rounded-xl hover:opacity-90 transition font-semibold shadow-lg">Login</button>
-                    <button id="menuBtn" class="md:hidden text-gray-700">
+                    <button id="menuBtn" class="md:hidden text-gray-300">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                         </svg>
@@ -325,12 +341,12 @@
             </div>
         </div>
         <!-- Mobile Menu -->
-        <div id="mobileMenu" class="hidden md:hidden bg-white border-t">
-            <a onclick="navigateTo('home')" class="block px-4 py-3 text-gray-700 hover:bg-purple-50 cursor-pointer">Home</a>
-            <a onclick="navigateTo('properties')" class="block px-4 py-3 text-gray-700 hover:bg-purple-50 cursor-pointer">Properties</a>
-            <a onclick="navigateTo('about')" class="block px-4 py-3 text-gray-700 hover:bg-purple-50 cursor-pointer">About</a>
-            <a onclick="navigateTo('contact')" class="block px-4 py-3 text-gray-700 hover:bg-purple-50 cursor-pointer">Contact</a>
-            <button onclick="openLoginModal()" class="block w-full text-left px-4 py-3 text-purple-600 hover:bg-purple-50 font-semibold">Login</button>
+        <div id="mobileMenu" class="hidden md:hidden bg-gray-900 border-t border-gray-700">
+            <a onclick="navigateTo('home')" class="block px-4 py-3 text-gray-300 hover:bg-gray-800 cursor-pointer">Home</a>
+            <a onclick="navigateTo('properties')" class="block px-4 py-3 text-gray-300 hover:bg-gray-800 cursor-pointer">Properties</a>
+            <a onclick="navigateTo('about')" class="block px-4 py-3 text-gray-300 hover:bg-gray-800 cursor-pointer">About</a>
+            <a onclick="navigateTo('contact')" class="block px-4 py-3 text-gray-300 hover:bg-gray-800 cursor-pointer">Contact</a>
+            <button onclick="openLoginModal()" class="block w-full text-left px-4 py-3 text-purple-400 hover:bg-gray-800 font-semibold">Login</button>
         </div>
     </nav>
 
@@ -344,7 +360,7 @@
 
             <!-- Income Summary Cards -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-                <div class="bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl shadow-2xl p-8 text-white transform hover:scale-105 transition">
+                <div class="bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl shadow-2xl p-8 text-white transform hover:scale-105 transition border border-blue-500">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-xl font-bold opacity-90">Total Weekly Income</h3>
                         <svg class="w-10 h-10 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -355,7 +371,7 @@
                     <p class="text-sm opacity-80 mt-3 font-medium">From all properties</p>
                 </div>
 
-                <div class="bg-gradient-to-br from-green-500 to-emerald-700 rounded-2xl shadow-2xl p-8 text-white transform hover:scale-105 transition">
+                <div class="bg-gradient-to-br from-green-600 to-emerald-800 rounded-2xl shadow-2xl p-8 text-white transform hover:scale-105 transition border border-green-500">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-xl font-bold opacity-90">Total Monthly Income</h3>
                         <svg class="w-10 h-10 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -366,7 +382,7 @@
                     <p class="text-sm opacity-80 mt-3 font-medium">Discounted rate</p>
                 </div>
 
-                <div class="bg-gradient-to-br from-purple-500 to-purple-700 rounded-2xl shadow-2xl p-8 text-white transform hover:scale-105 transition">
+                <div class="bg-gradient-to-br from-purple-600 to-purple-800 rounded-2xl shadow-2xl p-8 text-white transform hover:scale-105 transition border border-purple-500">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-xl font-bold opacity-90">Total Storage Space</h3>
                         <svg class="w-10 h-10 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -380,17 +396,17 @@
 
             <!-- Property List for Owners -->
             <div class="glass-effect rounded-2xl shadow-2xl p-8">
-                <h3 class="text-3xl font-bold text-gray-800 mb-6">Your Properties</h3>
+                <h3 class="text-3xl font-bold text-gray-200 mb-6">Your Properties</h3>
                 <div class="overflow-x-auto">
-                    <table class="w-full">
+                    <table class="w-full text-gray-300">
                         <thead>
-                            <tr class="bg-gradient-to-r from-purple-100 to-blue-100 text-left">
-                                <th class="px-6 py-4 font-bold text-gray-700">Property</th>
-                                <th class="px-6 py-4 font-bold text-gray-700">Type</th>
-                                <th class="px-6 py-4 font-bold text-gray-700">Interior</th>
-                                <th class="px-6 py-4 font-bold text-gray-700">Storage</th>
-                                <th class="px-6 py-4 font-bold text-gray-700">Weekly</th>
-                                <th class="px-6 py-4 font-bold text-gray-700">Monthly</th>
+                            <tr class="bg-gray-700 text-left text-gray-200">
+                                <th class="px-6 py-4 font-bold rounded-tl-xl">Property</th>
+                                <th class="px-6 py-4 font-bold">Type</th>
+                                <th class="px-6 py-4 font-bold">Interior</th>
+                                <th class="px-6 py-4 font-bold">Storage</th>
+                                <th class="px-6 py-4 font-bold">Weekly</th>
+                                <th class="px-6 py-4 font-bold rounded-tr-xl">Monthly</th>
                             </tr>
                         </thead>
                         <tbody id="ownerPropertiesTable">
@@ -405,7 +421,7 @@
     <!-- Property Detail Page -->
     <section id="propertyDetailPage" class="hidden min-h-screen py-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <button onclick="goBack()" class="mb-6 flex items-center space-x-2 text-purple-600 hover:text-purple-800 font-semibold transition">
+            <button onclick="goBack()" class="mb-6 flex items-center space-x-2 text-purple-400 hover:text-purple-300 font-semibold transition">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                 </svg>
@@ -418,19 +434,19 @@
 
             <!-- Reviews Section -->
             <div class="mt-12 glass-effect rounded-2xl shadow-2xl p-8">
-                <h3 class="text-3xl font-bold text-gray-800 mb-6">Reviews</h3>
+                <h3 class="text-3xl font-bold text-gray-200 mb-6">Reviews</h3>
                 
                 <!-- Review Form -->
-                <div class="mb-8 bg-gradient-to-r from-purple-50 to-blue-50 p-6 rounded-xl">
-                    <h4 class="text-xl font-bold text-gray-800 mb-4">Leave a Review</h4>
+                <div class="mb-8 bg-gray-800 p-6 rounded-xl border border-gray-700">
+                    <h4 class="text-xl font-bold text-gray-200 mb-4">Leave a Review</h4>
                     <form id="reviewForm" class="space-y-4">
                         <div>
-                            <label class="block text-gray-700 font-semibold mb-2">Your Name</label>
-                            <input type="text" id="reviewerName" required class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
+                            <label class="block text-gray-300 font-semibold mb-2">Your Name</label>
+                            <input type="text" id="reviewerName" required class="w-full px-4 py-3 border-2 border-gray-600 rounded-xl bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
                         </div>
                         <div>
-                            <label class="block text-gray-700 font-semibold mb-2">Rating</label>
-                            <select id="reviewRating" required class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
+                            <label class="block text-gray-300 font-semibold mb-2">Rating</label>
+                            <select id="reviewRating" required class="w-full px-4 py-3 border-2 border-gray-600 rounded-xl bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
                                 <option value="5">⭐⭐⭐⭐⭐ (5 stars)</option>
                                 <option value="4">⭐⭐⭐⭐ (4 stars)</option>
                                 <option value="3">⭐⭐⭐ (3 stars)</option>
@@ -439,8 +455,8 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-gray-700 font-semibold mb-2">Your Review</label>
-                            <textarea id="reviewText" rows="4" required class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition"></textarea>
+                            <label class="block text-gray-300 font-semibold mb-2">Your Review</label>
+                            <textarea id="reviewText" rows="4" required class="w-full px-4 py-3 border-2 border-gray-600 rounded-xl bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition"></textarea>
                         </div>
                         <button type="submit" class="gradient-bg text-white px-8 py-3 rounded-xl font-semibold hover:opacity-90 transition shadow-lg">Submit Review</button>
                     </form>
@@ -464,21 +480,20 @@
                 
                 <!-- Search Bar -->
                 <div class="max-w-5xl mx-auto glass-effect rounded-2xl shadow-2xl p-8">
-                    <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
-                        <input type="text" id="searchLocation" placeholder="Location" class="px-5 py-4 border-2 border-gray-200 rounded-xl text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 font-medium transition">
-                        <select id="searchType" class="px-5 py-4 border-2 border-gray-200 rounded-xl text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 font-medium transition">
+                    <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                        <select id="searchType" class="px-5 py-4 border-2 border-gray-600 rounded-xl bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 font-medium transition">
                             <option value="">Property Type</option>
                             <option value="house">House</option>
                             <option value="apartment">Apartment</option>
                             <option value="condo">Condo</option>
                             <option value="villa">Villa</option>
                         </select>
-                        <select id="searchInterior" class="px-5 py-4 border-2 border-gray-200 rounded-xl text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 font-medium transition">
+                        <select id="searchInterior" class="px-5 py-4 border-2 border-gray-600 rounded-xl bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 font-medium transition">
                             <option value="">Interior Type</option>
                             <option value="Walk-in">Walk-in</option>
                             <option value="Instance">Instance</option>
                         </select>
-                        <select id="searchPrice" class="px-5 py-4 border-2 border-gray-200 rounded-xl text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 font-medium transition">
+                        <select id="searchPrice" class="px-5 py-4 border-2 border-gray-600 rounded-xl bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 font-medium transition">
                             <option value="">Monthly Price</option>
                             <option value="0-200000">$0 - $200k</option>
                             <option value="200000-400000">$200k - $400k</option>
@@ -486,7 +501,7 @@
                             <option value="600000+">$600k+</option>
                         </select>
                         <button onclick="searchProperties()" class="gradient-bg text-white px-8 py-4 rounded-xl font-bold hover:opacity-90 transition shadow-lg">Search</button>
-                        <button onclick="clearFilters()" class="bg-gray-200 text-gray-700 px-8 py-4 rounded-xl font-bold hover:bg-gray-300 transition shadow-lg">Clear</button>
+                        <button onclick="clearFilters()" class="bg-gray-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-gray-500 transition shadow-lg">Clear</button>
                     </div>
                 </div>
             </div>
@@ -497,13 +512,13 @@
             <div class="flex flex-wrap gap-4 items-center justify-between">
                 <div class="flex gap-3 flex-wrap">
                     <button onclick="filterProperties('all')" class="filter-btn active px-6 py-3 rounded-xl gradient-bg text-white font-bold shadow-lg">All</button>
-                    <button onclick="filterProperties('house')" class="filter-btn px-6 py-3 rounded-xl bg-white text-gray-700 font-bold hover:shadow-lg transition shadow">Houses</button>
-                    <button onclick="filterProperties('apartment')" class="filter-btn px-6 py-3 rounded-xl bg-white text-gray-700 font-bold hover:shadow-lg transition shadow">Apartments</button>
-                    <button onclick="filterProperties('condo')" class="filter-btn px-6 py-3 rounded-xl bg-white text-gray-700 font-bold hover:shadow-lg transition shadow">Condos</button>
-                    <button onclick="filterProperties('villa')" class="filter-btn px-6 py-3 rounded-xl bg-white text-gray-700 font-bold hover:shadow-lg transition shadow">Villas</button>
+                    <button onclick="filterProperties('house')" class="filter-btn px-6 py-3 rounded-xl bg-gray-700 text-gray-200 font-bold hover:shadow-lg transition shadow">Houses</button>
+                    <button onclick="filterProperties('apartment')" class="filter-btn px-6 py-3 rounded-xl bg-gray-700 text-gray-200 font-bold hover:shadow-lg transition shadow">Apartments</button>
+                    <button onclick="filterProperties('condo')" class="filter-btn px-6 py-3 rounded-xl bg-gray-700 text-gray-200 font-bold hover:shadow-lg transition shadow">Condos</button>
+                    <button onclick="filterProperties('villa')" class="filter-btn px-6 py-3 rounded-xl bg-gray-700 text-gray-200 font-bold hover:shadow-lg transition shadow">Villas</button>
                 </div>
                 <div>
-                    <select id="sortBy" onchange="sortProperties()" class="px-6 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 font-semibold shadow">
+                    <select id="sortBy" onchange="sortProperties()" class="px-6 py-3 border-2 border-gray-600 rounded-xl bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 font-semibold shadow">
                         <option value="">Sort By</option>
                         <option value="price-low">Price: Low to High</option>
                         <option value="price-high">Price: High to Low</option>
@@ -517,18 +532,18 @@
 
         <!-- Properties Grid -->
         <section id="properties" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <h3 class="text-4xl font-black text-gray-800 mb-10">Featured Properties</h3>
+            <h3 class="text-4xl font-black text-white mb-10">Featured Properties</h3>
             <div id="propertiesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
                 <!-- Properties will be dynamically inserted here -->
             </div>
         </section>
 
         <!-- About Section -->
-        <section id="about" class="bg-white py-20">
+        <section id="about" class="py-20">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-16">
-                    <h3 class="text-5xl font-black text-gray-800 mb-6">Why Choose Pauly's Property Portal?</h3>
-                    <p class="text-xl text-gray-600 max-w-3xl mx-auto font-medium">Simple. Fast. Premium. That's how we do business.</p>
+                    <h3 class="text-5xl font-black text-white mb-6">Why Choose Pauly's Property Portal?</h3>
+                    <p class="text-xl text-gray-300 max-w-3xl mx-auto font-medium">Simple. Fast. Premium. That's how we do business.</p>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
                     <div class="text-center p-8 glass-effect rounded-2xl shadow-lg transform hover:scale-105 transition">
@@ -537,8 +552,8 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                             </svg>
                         </div>
-                        <h4 class="text-2xl font-bold mb-3">Lightning-Fast Responses</h4>
-                        <p class="text-gray-600 font-medium">Text us and get a reply in minutes, not days. We're always ready.</p>
+                        <h4 class="text-2xl font-bold mb-3 text-white">Lightning-Fast Responses</h4>
+                        <p class="text-gray-300 font-medium">Text us and get a reply in minutes, not days. We're always ready.</p>
                     </div>
                     <div class="text-center p-8 glass-effect rounded-2xl shadow-lg transform hover:scale-105 transition">
                         <div class="gradient-bg w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
@@ -546,8 +561,8 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                             </svg>
                         </div>
-                        <h4 class="text-2xl font-bold mb-3">World-Class Team</h4>
-                        <p class="text-gray-600 font-medium">Our sales and support crew treats every client like family.</p>
+                        <h4 class="text-2xl font-bold mb-3 text-white">World-Class Team</h4>
+                        <p class="text-gray-300 font-medium">Our sales and support crew treats every client like family.</p>
                     </div>
                     <div class="text-center p-8 glass-effect rounded-2xl shadow-lg transform hover:scale-105 transition">
                         <div class="gradient-bg w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
@@ -555,26 +570,26 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
                         </div>
-                        <h4 class="text-2xl font-bold mb-3">Unbeatable Value</h4>
-                        <p class="text-gray-600 font-medium">Premium properties at prices that make sense. No games, just deals.</p>
+                        <h4 class="text-2xl font-bold mb-3 text-white">Unbeatable Value</h4>
+                        <p class="text-gray-300 font-medium">Premium properties at prices that make sense. No games, just deals.</p>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- Contact Section -->
-        <section id="contact" class="bg-gradient-to-br from-gray-100 to-gray-200 py-20">
+        <section id="contact" class="bg-gradient-to-br from-gray-800 to-gray-900 py-20 border-t border-gray-700">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="max-w-3xl mx-auto">
-                    <h3 class="text-5xl font-black text-gray-800 mb-6 text-center">Get In Touch</h3>
-                    <p class="text-xl text-gray-600 text-center mb-12 font-medium">Have questions? Text our team directly for the fastest response!</p>
+                    <h3 class="text-5xl font-black text-white mb-6 text-center">Get In Touch</h3>
+                    <p class="text-xl text-gray-400 text-center mb-12 font-medium">Have questions? Text our team directly for the fastest response!</p>
                     
                     <div class="glass-effect rounded-2xl shadow-2xl p-10">
                         <!-- Phone Number Section -->
                         <div class="mb-8">
-                            <label class="block text-gray-700 font-bold mb-3 text-lg">📱 Our Team's Number:</label>
+                            <label class="block text-gray-300 font-bold mb-3 text-lg">📱 Our Team's Number:</label>
                             <div class="flex items-center gap-3">
-                                <input type="text" id="contactPhoneNumber" value="2057028233" readonly class="flex-1 px-5 py-4 border-2 border-gray-200 rounded-xl bg-gray-50 font-bold text-xl text-gray-800">
+                                <input type="text" id="contactPhoneNumber" value="2057028233" readonly class="flex-1 px-5 py-4 border-2 border-gray-600 rounded-xl bg-gray-700 font-bold text-xl text-white">
                                 <button onclick="copyContactPhone()" id="copyContactPhoneBtn" class="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-8 py-4 rounded-xl font-bold hover:opacity-90 transition shadow-lg text-lg">
                                     Copy
                                 </button>
@@ -583,18 +598,18 @@
                         
                         <!-- Pre-written Message Section -->
                         <div class="mb-8">
-                            <label class="block text-gray-700 font-bold mb-3 text-lg">💬 Your Message (ready to paste):</label>
-                            <textarea id="contactMessageText" readonly rows="4" class="w-full px-5 py-4 border-2 border-gray-200 rounded-xl bg-gray-50 font-medium text-gray-800 text-lg">Hi! I'm interested in learning more about your available properties. Please contact me at your earliest convenience. Thank you!</textarea>
+                            <label class="block text-gray-300 font-bold mb-3 text-lg">💬 Your Message (ready to paste):</label>
+                            <textarea id="contactMessageText" readonly rows="4" class="w-full px-5 py-4 border-2 border-gray-600 rounded-xl bg-gray-700 font-medium text-white text-lg">Hi! I'm interested in learning more about your available properties. Please contact me at your earliest convenience. Thank you!</textarea>
                             <button onclick="copyContactMessage()" id="copyContactMessageBtn" class="w-full mt-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-8 py-4 rounded-xl font-bold hover:opacity-90 transition shadow-lg text-lg">
                                 Copy Message
                             </button>
                         </div>
                         
                         <!-- Encouragement -->
-                        <div class="bg-gradient-to-r from-purple-100 to-blue-100 p-6 rounded-xl text-center">
-                            <p class="text-purple-800 font-black text-xl">⚡ Text for the fastest response!</p>
-                            <p class="text-purple-700 font-medium mt-2">Our team typically responds within minutes.</p>
-                            <p class="text-gray-600 text-sm mt-3">⏰ Please allow up to 24 hours for a response during busy periods.</p>
+                        <div class="bg-gradient-to-r from-purple-900 to-blue-900 p-6 rounded-xl text-center border border-purple-700">
+                            <p class="text-purple-200 font-black text-xl">⚡ Text for the fastest response!</p>
+                            <p class="text-purple-300 font-medium mt-2">Our team typically responds within minutes.</p>
+                            <p class="text-gray-400 text-sm mt-3">⏰ Please allow up to 24 hours for a response during busy periods.</p>
                         </div>
                     </div>
                 </div>
@@ -603,12 +618,17 @@
     </div>
 
     <!-- Footer -->
-    <footer class="bg-gray-900 text-white py-12">
+    <footer class="bg-gray-900 text-white py-12 border-t border-gray-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Moved Logo from Top Center to Grid Column 1 -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
                 <div>
                     <h4 class="text-2xl font-black mb-5 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">Pauly's Property Hub</h4>
-                    <p class="text-gray-400 font-medium">Your trusted partner in finding the perfect property.</p>
+                    <p class="text-gray-400 font-medium mb-6">Your trusted partner in finding the perfect property.</p>
+                    <!-- Linkable Logo -->
+                    <div onclick="goHome()" class="cursor-pointer gradient-bg w-20 h-20 rounded-2xl flex items-center justify-center font-black text-white text-3xl shadow-lg hover:scale-105 transition transform">
+                        PPP
+                    </div>
                 </div>
                 <div>
                     <h4 class="text-2xl font-black mb-5">Quick Links</h4>
@@ -641,7 +661,7 @@
                     </ul>
                 </div>
             </div>
-            <div class="border-t border-gray-700 mt-10 pt-8 text-center text-gray-400 font-medium">
+            <div class="border-t border-gray-800 mt-10 pt-8 text-center text-gray-400 font-medium">
                 <p>&copy; 2024 Pauly's Property Hub. All rights reserved.</p>
             </div>
         </div>
@@ -1122,13 +1142,13 @@
         function renderOwnerDashboard() {
             const tableBody = document.getElementById('ownerPropertiesTable');
             tableBody.innerHTML = properties.map(property => `
-                <tr class="border-b hover:bg-purple-50 transition">
-                    <td class="px-6 py-4 font-bold text-gray-800">${property.title}</td>
-                    <td class="px-6 py-4 text-gray-600 capitalize">${property.type}</td>
-                    <td class="px-6 py-4 text-gray-600">${property.interiorType}</td>
-                    <td class="px-6 py-4 text-gray-600">${property.storage.toLocaleString()}</td>
-                    <td class="px-6 py-4 text-green-600 font-bold">$${property.weeklyPrice.toLocaleString()}</td>
-                    <td class="px-6 py-4 text-purple-600 font-bold">$${property.monthlyPrice.toLocaleString()}</td>
+                <tr class="border-b border-gray-700 hover:bg-gray-700 transition">
+                    <td class="px-6 py-4 font-bold text-gray-200">${property.title}</td>
+                    <td class="px-6 py-4 text-gray-300 capitalize">${property.type}</td>
+                    <td class="px-6 py-4 text-gray-300">${property.interiorType}</td>
+                    <td class="px-6 py-4 text-gray-300">${property.storage.toLocaleString()}</td>
+                    <td class="px-6 py-4 text-green-400 font-bold">$${property.weeklyPrice.toLocaleString()}</td>
+                    <td class="px-6 py-4 text-purple-400 font-bold">$${property.monthlyPrice.toLocaleString()}</td>
                 </tr>
             `).join('');
         }
@@ -1143,32 +1163,86 @@
         function renderProperties(propertiesToRender) {
             const grid = document.getElementById('propertiesGrid');
             grid.innerHTML = propertiesToRender.map(property => `
-                <div class="property-card bg-white rounded-2xl shadow-xl overflow-hidden cursor-pointer" onclick="viewProperty(${property.id})">
-                    <div class="relative">
-                        <img src="${property.images[0]}" alt="${property.title}" class="w-full h-72 object-cover">
+                <div class="property-card bg-gray-800 rounded-2xl shadow-xl overflow-hidden cursor-pointer border border-gray-700" onclick="viewProperty(${property.id})">
+                    <div class="carousel-container relative">
+                        <button onclick="event.stopPropagation(); prevCardImage(${property.id})" class="carousel-arrow carousel-arrow-left">‹</button>
+                        <img id="card-img-${property.id}" src="${property.images[0]}" alt="${property.title}" class="w-full h-72 object-cover transition duration-500">
+                        <button onclick="event.stopPropagation(); nextCardImage(${property.id})" class="carousel-arrow carousel-arrow-right">›</button>
+                        
+                        <div class="carousel-dots" id="dots-${property.id}">
+                            ${property.images.map((_, idx) => `
+                                <div class="carousel-dot ${idx === 0 ? 'active' : ''}"></div>
+                            `).join('')}
+                        </div>
+
                         ${property.videoUrl ? '<div class="absolute top-4 left-4 bg-gradient-to-r from-red-500 to-pink-600 text-white px-4 py-2 rounded-full font-bold text-sm shadow-lg flex items-center space-x-2"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"></path></svg><span>Video Tour</span></div>' : ''}
                     </div>
                     <div class="p-6">
                         <div class="flex justify-between items-start mb-3">
-                            <h4 class="text-2xl font-bold text-gray-800">${property.title}</h4>
+                            <h4 class="text-2xl font-bold text-white">${property.title}</h4>
                             <span class="badge text-white text-xs font-bold px-3 py-1 rounded-full uppercase">${property.type}</span>
                         </div>
-                        <p class="text-gray-600 mb-2 font-medium">📍 ${property.location}</p>
-                        <p class="text-sm text-gray-500 mb-4 font-semibold">🏠 Interior: ${property.interiorType}</p>
-                        <div class="grid grid-cols-3 gap-2 mb-4 text-sm text-gray-600 font-semibold">
+                        <p class="text-gray-300 mb-2 font-medium">📍 ${property.location}</p>
+                        <p class="text-sm text-gray-400 mb-4 font-semibold">🏠 Interior: ${property.interiorType}</p>
+                        <div class="grid grid-cols-3 gap-2 mb-4 text-sm text-gray-300 font-semibold">
                             <div>🛏️ ${property.bedrooms} Beds</div>
                             <div>🚿 ${property.bathrooms} Baths</div>
                             <div>📦 ${property.storage.toLocaleString()}</div>
                         </div>
                         <div class="mb-4 text-sm">
-                            <div class="text-gray-700 font-semibold"><span class="font-bold">Weekly:</span> $${property.weeklyPrice.toLocaleString()}</div>
-                            <div class="text-purple-600 font-black text-2xl mt-1">$${property.monthlyPrice.toLocaleString()}<span class="text-sm font-semibold text-gray-600">/month</span></div>
+                            <div class="text-gray-400 font-semibold"><span class="font-bold text-gray-300">Weekly:</span> $${property.weeklyPrice.toLocaleString()}</div>
+                            <div class="text-purple-400 font-black text-2xl mt-1">$${property.monthlyPrice.toLocaleString()}<span class="text-sm font-semibold text-gray-400">/month</span></div>
                         </div>
                         <button onclick="viewProperty(${property.id})" class="w-full gradient-bg text-white px-6 py-3 rounded-xl font-bold hover:opacity-90 transition shadow-lg mb-2">View Details</button>
-                        <button onclick="event.stopPropagation(); openOfferModal('${property.title}')" class="w-full bg-gradient-to-r from-amber-400 to-orange-500 text-gray-900 px-6 py-3 rounded-xl font-bold hover:from-amber-300 hover:to-orange-400 transition shadow-lg">Make an Offer</button>
+                        <button onclick="event.stopPropagation(); openOfferModal('${property.title}')" class="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white px-6 py-3 rounded-xl font-bold hover:from-amber-400 hover:to-orange-500 transition shadow-lg">Make an Offer</button>
                     </div>
                 </div>
             `).join('');
+        }
+
+        // Helper variables to track carousel state
+        let cardImageIndices = {};
+
+        function nextCardImage(id) {
+            const property = properties.find(p => p.id === id);
+            if (!property) return;
+            
+            if (!cardImageIndices[id]) cardImageIndices[id] = 0;
+            cardImageIndices[id] = (cardImageIndices[id] + 1) % property.images.length;
+            
+            updateCardImage(id, property);
+        }
+
+        function prevCardImage(id) {
+            const property = properties.find(p => p.id === id);
+            if (!property) return;
+            
+            if (!cardImageIndices[id]) cardImageIndices[id] = 0;
+            cardImageIndices[id] = (cardImageIndices[id] - 1 + property.images.length) % property.images.length;
+            
+            updateCardImage(id, property);
+        }
+
+        function updateCardImage(id, property) {
+            const img = document.getElementById(`card-img-${id}`);
+            const dotsContainer = document.getElementById(`dots-${id}`);
+            const index = cardImageIndices[id];
+            
+            if (img) {
+                img.style.opacity = 0;
+                setTimeout(() => {
+                    img.src = property.images[index];
+                    img.style.opacity = 1;
+                }, 150);
+            }
+            
+            if (dotsContainer) {
+                const dots = dotsContainer.children;
+                for (let i = 0; i < dots.length; i++) {
+                    if (i === index) dots[i].classList.add('active');
+                    else dots[i].classList.remove('active');
+                }
+            }
         }
 
         // Filter properties
@@ -1177,9 +1251,9 @@
             
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.classList.remove('active', 'gradient-bg', 'text-white');
-                btn.classList.add('bg-white', 'text-gray-700');
+                btn.classList.add('bg-gray-700', 'text-gray-200');
             });
-            event.target.classList.remove('bg-white', 'text-gray-700');
+            event.target.classList.remove('bg-gray-700', 'text-gray-200');
             event.target.classList.add('active', 'gradient-bg', 'text-white');
 
             if (type === 'all') {
@@ -1211,7 +1285,6 @@
 
         // Clear all filters
         function clearFilters() {
-            document.getElementById('searchLocation').value = '';
             document.getElementById('searchType').value = '';
             document.getElementById('searchInterior').value = '';
             document.getElementById('searchPrice').value = '';
@@ -1220,9 +1293,9 @@
             // Reset filter buttons
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.classList.remove('active', 'gradient-bg', 'text-white');
-                btn.classList.add('bg-white', 'text-gray-700');
+                btn.classList.add('bg-gray-700', 'text-gray-200');
             });
-            document.querySelector('.filter-btn').classList.remove('bg-white', 'text-gray-700');
+            document.querySelector('.filter-btn').classList.remove('bg-gray-700', 'text-gray-200');
             document.querySelector('.filter-btn').classList.add('active', 'gradient-bg', 'text-white');
             
             currentFilter = 'all';
@@ -1232,17 +1305,12 @@
 
         // Search properties
         function searchProperties() {
-            const location = document.getElementById('searchLocation').value.toLowerCase();
             const type = document.getElementById('searchType').value;
             const interiorType = document.getElementById('searchInterior').value;
             const priceRange = document.getElementById('searchPrice').value;
 
             filteredProperties = properties.filter(property => {
                 let matches = true;
-
-                if (location && !property.location.toLowerCase().includes(location)) {
-                    matches = false;
-                }
 
                 if (type && property.type !== type) {
                     matches = false;
@@ -1283,14 +1351,14 @@
             content.innerHTML = `
                 ${property.videoUrl ? `
                     <!-- Video Tour Section -->
-                    <div class="p-6 bg-gradient-to-r from-red-50 to-pink-50">
+                    <div class="p-6 bg-gradient-to-r from-red-900 to-pink-900 border-b border-gray-700">
                         <div class="flex items-center space-x-3 mb-4">
-                            <svg class="w-8 h-8 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-8 h-8 text-red-500" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"></path>
                             </svg>
-                            <h3 class="text-2xl font-black text-gray-800">Virtual Video Tour</h3>
+                            <h3 class="text-2xl font-black text-white">Virtual Video Tour</h3>
                         </div>
-                        <video controls autoplay muted playsinline class="w-full rounded-xl shadow-2xl" poster="${property.images[0]}">
+                        <video controls autoplay muted playsinline class="w-full rounded-xl shadow-2xl border border-gray-600" poster="${property.images[0]}">
                             <source src="${property.videoUrl}" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
@@ -1302,7 +1370,7 @@
                     ${property.images.map((img, index) => `
                         <img src="${img}" alt="${property.title} - Image ${index + 1}" 
                              onclick="openLightboxAtIndex(${index})" 
-                             class="property-image-clickable w-full h-80 object-cover rounded-xl shadow-lg ${index === 0 ? 'md:col-span-2' : ''}">
+                             class="property-image-clickable w-full h-80 object-cover rounded-xl shadow-lg border border-gray-600 ${index === 0 ? 'md:col-span-2' : ''}">
                     `).join('')}
                 </div>
 
@@ -1310,92 +1378,92 @@
                 <div class="p-8">
                     <div class="flex justify-between items-start mb-6">
                         <div>
-                            <h2 class="text-4xl font-black text-gray-800 mb-2">${property.title}</h2>
-                            <p class="text-xl text-gray-600 font-semibold">📍 ${property.location}</p>
+                            <h2 class="text-4xl font-black text-white mb-2">${property.title}</h2>
+                            <p class="text-xl text-gray-300 font-semibold">📍 ${property.location}</p>
                         </div>
                         <span class="badge text-white text-sm font-bold px-4 py-2 rounded-full uppercase">${property.type}</span>
                     </div>
 
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-                        <div class="text-center p-4 bg-purple-50 rounded-xl">
+                        <div class="text-center p-4 bg-gray-700 rounded-xl border border-gray-600">
                             <div class="text-3xl mb-2">🛏️</div>
-                            <div class="text-2xl font-bold text-gray-800">${property.bedrooms}</div>
-                            <div class="text-sm text-gray-600 font-semibold">Bedrooms</div>
+                            <div class="text-2xl font-bold text-white">${property.bedrooms}</div>
+                            <div class="text-sm text-gray-300 font-semibold">Bedrooms</div>
                         </div>
-                        <div class="text-center p-4 bg-blue-50 rounded-xl">
+                        <div class="text-center p-4 bg-gray-700 rounded-xl border border-gray-600">
                             <div class="text-3xl mb-2">🚿</div>
-                            <div class="text-2xl font-bold text-gray-800">${property.bathrooms}</div>
-                            <div class="text-sm text-gray-600 font-semibold">Bathrooms</div>
+                            <div class="text-2xl font-bold text-white">${property.bathrooms}</div>
+                            <div class="text-sm text-gray-300 font-semibold">Bathrooms</div>
                         </div>
-                        <div class="text-center p-4 bg-green-50 rounded-xl">
+                        <div class="text-center p-4 bg-gray-700 rounded-xl border border-gray-600">
                             <div class="text-3xl mb-2">📦</div>
-                            <div class="text-2xl font-bold text-gray-800">${property.storage.toLocaleString()}</div>
-                            <div class="text-sm text-gray-600 font-semibold">Storage</div>
+                            <div class="text-2xl font-bold text-white">${property.storage.toLocaleString()}</div>
+                            <div class="text-sm text-gray-300 font-semibold">Storage</div>
                         </div>
-                        <div class="text-center p-4 bg-yellow-50 rounded-xl">
+                        <div class="text-center p-4 bg-gray-700 rounded-xl border border-gray-600">
                             <div class="text-3xl mb-2">🏠</div>
-                            <div class="text-2xl font-bold text-gray-800">${property.interiorType}</div>
-                            <div class="text-sm text-gray-600 font-semibold">Interior</div>
+                            <div class="text-2xl font-bold text-white">${property.interiorType}</div>
+                            <div class="text-sm text-gray-300 font-semibold">Interior</div>
                         </div>
                     </div>
 
                     ${property.features ? `
-                    <div class="bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50 p-10 rounded-3xl mb-8 border-4 border-amber-200 shadow-2xl">
-                        <h3 class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-orange-600 mb-8 flex items-center">
-                            <svg class="w-10 h-10 text-amber-500 mr-4 animate-pulse" fill="currentColor" viewBox="0 0 20 20">
+                    <div class="bg-gradient-to-br from-amber-900 via-orange-900 to-red-900 p-10 rounded-3xl mb-8 border-4 border-amber-700 shadow-2xl">
+                        <h3 class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400 mb-8 flex items-center">
+                            <svg class="w-10 h-10 text-amber-400 mr-4 animate-pulse" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
                             </svg>
                             Luxury Estate Features
                         </h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="flex items-start space-x-4 bg-white bg-opacity-60 p-5 rounded-2xl shadow-lg hover:shadow-xl transition transform hover:scale-105">
+                            <div class="flex items-start space-x-4 bg-black bg-opacity-40 p-5 rounded-2xl shadow-lg hover:shadow-xl transition transform hover:scale-105 border border-amber-600/30">
                                 <div class="text-5xl">🐠</div>
                                 <div>
-                                    <h4 class="text-xl font-black text-gray-800 mb-1">500-Gallon Aquarium</h4>
-                                    <p class="text-gray-600 font-medium">Giant indoor aquarium with exotic marine life</p>
+                                    <h4 class="text-xl font-black text-white mb-1">500-Gallon Aquarium</h4>
+                                    <p class="text-gray-300 font-medium">Giant indoor aquarium with exotic marine life</p>
                                 </div>
                             </div>
-                            <div class="flex items-start space-x-4 bg-white bg-opacity-60 p-5 rounded-2xl shadow-lg hover:shadow-xl transition transform hover:scale-105">
+                            <div class="flex items-start space-x-4 bg-black bg-opacity-40 p-5 rounded-2xl shadow-lg hover:shadow-xl transition transform hover:scale-105 border border-amber-600/30">
                                 <div class="text-5xl">🍳</div>
                                 <div>
-                                    <h4 class="text-xl font-black text-gray-800 mb-1">Outdoor Kitchen</h4>
-                                    <p class="text-gray-600 font-medium">Professional-grade outdoor cooking station</p>
+                                    <h4 class="text-xl font-black text-white mb-1">Outdoor Kitchen</h4>
+                                    <p class="text-gray-300 font-medium">Professional-grade outdoor cooking station</p>
                                 </div>
                             </div>
-                            <div class="flex items-start space-x-4 bg-white bg-opacity-60 p-5 rounded-2xl shadow-lg hover:shadow-xl transition transform hover:scale-105">
+                            <div class="flex items-start space-x-4 bg-black bg-opacity-40 p-5 rounded-2xl shadow-lg hover:shadow-xl transition transform hover:scale-105 border border-amber-600/30">
                                 <div class="text-5xl">🏊</div>
                                 <div>
-                                    <h4 class="text-xl font-black text-gray-800 mb-1">Infinity Pool</h4>
-                                    <p class="text-gray-600 font-medium">Stunning infinity edge pool with ocean views</p>
+                                    <h4 class="text-xl font-black text-white mb-1">Infinity Pool</h4>
+                                    <p class="text-gray-300 font-medium">Stunning infinity edge pool with ocean views</p>
                                 </div>
                             </div>
-                            <div class="flex items-start space-x-4 bg-white bg-opacity-60 p-5 rounded-2xl shadow-lg hover:shadow-xl transition transform hover:scale-105">
+                            <div class="flex items-start space-x-4 bg-black bg-opacity-40 p-5 rounded-2xl shadow-lg hover:shadow-xl transition transform hover:scale-105 border border-amber-600/30">
                                 <div class="text-5xl">🚁</div>
                                 <div>
-                                    <h4 class="text-xl font-black text-gray-800 mb-1">Helicopter Pad</h4>
-                                    <p class="text-gray-600 font-medium">Private landing pad for ultimate convenience</p>
+                                    <h4 class="text-xl font-black text-white mb-1">Helicopter Pad</h4>
+                                    <p class="text-gray-300 font-medium">Private landing pad for ultimate convenience</p>
                                 </div>
                             </div>
-                            <div class="flex items-start space-x-4 bg-white bg-opacity-60 p-5 rounded-2xl shadow-lg hover:shadow-xl transition transform hover:scale-105 md:col-span-2">
+                            <div class="flex items-start space-x-4 bg-black bg-opacity-40 p-5 rounded-2xl shadow-lg hover:shadow-xl transition transform hover:scale-105 md:col-span-2 border border-amber-600/30">
                                 <div class="text-5xl">🛣️</div>
                                 <div>
-                                    <h4 class="text-xl font-black text-gray-800 mb-1">Private Driveway</h4>
-                                    <p class="text-gray-600 font-medium">Long, gated driveway ensuring complete privacy and exclusivity</p>
+                                    <h4 class="text-xl font-black text-white mb-1">Private Driveway</h4>
+                                    <p class="text-gray-300 font-medium">Long, gated driveway ensuring complete privacy and exclusivity</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                     ` : ''}
 
-                    <div class="bg-gradient-to-r from-purple-100 to-blue-100 p-8 rounded-2xl mb-8">
+                    <div class="bg-gray-800 p-8 rounded-2xl mb-8 border border-gray-700">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <div class="text-gray-700 font-bold mb-2">Weekly Price</div>
-                                <div class="text-3xl font-black text-green-600">$${property.weeklyPrice.toLocaleString()}</div>
+                                <div class="text-gray-400 font-bold mb-2">Weekly Price</div>
+                                <div class="text-3xl font-black text-green-400">$${property.weeklyPrice.toLocaleString()}</div>
                             </div>
                             <div>
-                                <div class="text-gray-700 font-bold mb-2">Monthly Price (Discounted)</div>
-                                <div class="text-4xl font-black text-purple-600">$${property.monthlyPrice.toLocaleString()}</div>
+                                <div class="text-gray-400 font-bold mb-2">Monthly Price (Discounted)</div>
+                                <div class="text-4xl font-black text-purple-400">$${property.monthlyPrice.toLocaleString()}</div>
                             </div>
                         </div>
                     </div>
@@ -1403,7 +1471,7 @@
                     <button onclick="openRentalModal('${property.title}')" class="w-full gradient-bg text-white px-8 py-4 rounded-xl font-black text-xl hover:opacity-90 transition shadow-lg mb-4">
                         Make an Offer to Rent
                     </button>
-                    <button onclick="openOfferModal('${property.title}')" class="w-full bg-gradient-to-r from-amber-400 to-orange-500 text-gray-900 px-8 py-4 rounded-xl font-black text-xl hover:from-amber-300 hover:to-orange-400 transition shadow-lg">
+                    <button onclick="openOfferModal('${property.title}')" class="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white px-8 py-4 rounded-xl font-black text-xl hover:from-amber-400 hover:to-orange-500 transition shadow-lg">
                         Make an Offer to Purchase
                     </button>
                 </div>
@@ -1427,12 +1495,12 @@
                 <div class="review-card p-6 rounded-xl shadow-md">
                     <div class="flex justify-between items-start mb-3">
                         <div>
-                            <h5 class="font-bold text-gray-800 text-lg">${review.name}</h5>
-                            <div class="text-yellow-500 text-xl">${'⭐'.repeat(review.rating)}</div>
+                            <h5 class="font-bold text-white text-lg">${review.name}</h5>
+                            <div class="text-yellow-400 text-xl">${'⭐'.repeat(review.rating)}</div>
                         </div>
-                        <div class="text-sm text-gray-500 font-medium">${review.date}</div>
+                        <div class="text-sm text-gray-400 font-medium">${review.date}</div>
                     </div>
-                    <p class="text-gray-700 font-medium">${review.text}</p>
+                    <p class="text-gray-300 font-medium">${review.text}</p>
                 </div>
             `).join('');
         }
