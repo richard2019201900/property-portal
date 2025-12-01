@@ -6,6 +6,9 @@
     <title>Pauly's Property Portal - Find Your Dream Home</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <style>
         * {
             font-family: 'Inter', sans-serif;
@@ -190,6 +193,64 @@
             border-radius: 4px;
         }
 
+        /* Unavailable Property Overlay */
+        .unavailable-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 5;
+        }
+
+        .unavailable-text {
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            color: white;
+            padding: 12px 24px;
+            font-size: 1.5rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            transform: rotate(-15deg);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            border: 3px solid white;
+        }
+
+        /* Toggle Switch Styles */
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+            background: #374151;
+            border-radius: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .toggle-switch.active::after {
+            left: 27px;
+        }
+
         /* Custom Scrollbar for Dark Mode */
         ::-webkit-scrollbar {
             width: 10px;
@@ -294,23 +355,49 @@
     <!-- Login Modal -->
     <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center hidden">
         <div class="glass-effect rounded-2xl shadow-2xl p-10 max-w-md w-full mx-4 transform transition-all border border-gray-700">
-            <h2 class="text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-6 text-center">Welcome to Pauly's Property Portal</h2>
-            <p class="text-gray-300 mb-8 text-center font-medium">Please select your login type</p>
-            <div class="space-y-4">
-                <button onclick="loginAsOwner()" class="w-full gradient-bg text-white px-6 py-4 rounded-xl font-semibold hover:opacity-90 transition flex items-center justify-center space-x-3 shadow-lg">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                    </svg>
-                    <span>Property Owner</span>
-                </button>
-                <button onclick="loginAsRenter()" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-4 rounded-xl font-semibold hover:opacity-90 transition flex items-center justify-center space-x-3 shadow-lg">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                    </svg>
-                    <span>Property Renter</span>
-                </button>
+            <!-- Main Login Options -->
+            <div id="loginOptions">
+                <h2 class="text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-6 text-center">Welcome to Pauly's Property Portal</h2>
+                <p class="text-gray-300 mb-8 text-center font-medium">Please select your login type</p>
+                <div class="space-y-4">
+                    <button onclick="showOwnerLoginForm()" class="w-full gradient-bg text-white px-6 py-4 rounded-xl font-semibold hover:opacity-90 transition flex items-center justify-center space-x-3 shadow-lg">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                        <span>Property Owner</span>
+                    </button>
+                    <button onclick="loginAsRenter()" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-4 rounded-xl font-semibold hover:opacity-90 transition flex items-center justify-center space-x-3 shadow-lg">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                        <span>Property Renter</span>
+                    </button>
+                </div>
+                <button onclick="closeLoginModal()" class="w-full mt-6 text-gray-400 hover:text-gray-200 font-semibold transition">Close</button>
             </div>
-            <button onclick="closeLoginModal()" class="w-full mt-6 text-gray-400 hover:text-gray-200 font-semibold transition">Close</button>
+            
+            <!-- Owner Login Form (Hidden by default) -->
+            <div id="ownerLoginForm" class="hidden">
+                <h2 class="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-6 text-center">Property Owner Login</h2>
+                <p class="text-gray-300 mb-6 text-center font-medium">Enter your credentials to access the dashboard</p>
+                
+                <form id="firebaseLoginForm" class="space-y-4">
+                    <div>
+                        <label class="block text-gray-300 font-semibold mb-2">Email</label>
+                        <input type="email" id="ownerEmail" required class="w-full px-4 py-3 border-2 border-gray-600 rounded-xl bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition" placeholder="owner@example.com">
+                    </div>
+                    <div>
+                        <label class="block text-gray-300 font-semibold mb-2">Password</label>
+                        <input type="password" id="ownerPassword" required class="w-full px-4 py-3 border-2 border-gray-600 rounded-xl bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition" placeholder="••••••••">
+                    </div>
+                    <div id="loginError" class="hidden text-red-400 text-sm font-medium text-center p-3 bg-red-900/30 rounded-xl"></div>
+                    <button type="submit" id="loginSubmitBtn" class="w-full gradient-bg text-white px-6 py-4 rounded-xl font-semibold hover:opacity-90 transition shadow-lg">
+                        Sign In
+                    </button>
+                </form>
+                
+                <button onclick="hideOwnerLoginForm()" class="w-full mt-4 text-gray-400 hover:text-gray-200 font-semibold transition">← Back</button>
+            </div>
         </div>
     </div>
 
@@ -367,7 +454,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                     </div>
-                    <p class="text-5xl font-black">$1,095,000.00</p>
+                    <p id="weeklyIncomeDisplay" class="text-4xl md:text-5xl font-black break-words">$1,095,000</p>
                     <p class="text-sm opacity-80 mt-3 font-medium">From all properties</p>
                 </div>
 
@@ -378,19 +465,19 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
                         </svg>
                     </div>
-                    <p class="text-5xl font-black">$3,355,000.00</p>
+                    <p id="monthlyIncomeDisplay" class="text-4xl md:text-5xl font-black break-words">$3,355,000</p>
                     <p class="text-sm opacity-80 mt-3 font-medium">Discounted rate</p>
                 </div>
 
                 <div class="bg-gradient-to-br from-purple-600 to-purple-800 rounded-2xl shadow-2xl p-8 text-white transform hover:scale-105 transition border border-purple-500">
                     <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-xl font-bold opacity-90">Total Storage Space</h3>
+                        <h3 class="text-xl font-bold opacity-90">Total Units Available</h3>
                         <svg class="w-10 h-10 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
                         </svg>
                     </div>
-                    <p class="text-5xl font-black">17,550</p>
-                    <p class="text-sm opacity-80 mt-3 font-medium">Total units available</p>
+                    <p id="unitsAvailableDisplay" class="text-4xl md:text-5xl font-black break-words">14/14</p>
+                    <p class="text-sm opacity-80 mt-3 font-medium">Properties available</p>
                 </div>
             </div>
 
@@ -401,7 +488,8 @@
                     <table class="w-full text-gray-300">
                         <thead>
                             <tr class="bg-gray-700 text-left text-gray-200">
-                                <th class="px-6 py-4 font-bold rounded-tl-xl">Property</th>
+                                <th class="px-6 py-4 font-bold rounded-tl-xl">Available</th>
+                                <th class="px-6 py-4 font-bold">Property</th>
                                 <th class="px-6 py-4 font-bold">Type</th>
                                 <th class="px-6 py-4 font-bold">Interior</th>
                                 <th class="px-6 py-4 font-bold">Storage</th>
@@ -668,6 +756,20 @@
     </footer>
 
     <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDtxI5MhMc36U_rERd_rv15aaYp77P1wWA",
+            authDomain: "paulys-property-portal.firebaseapp.com",
+            projectId: "paulys-property-portal",
+            storageBucket: "paulys-property-portal.firebasestorage.app",
+            messagingSenderId: "667779460256",
+            appId: "1:667779460256:web:c8f3c34c7e432eca73adc5"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
         // Property data with updated information
         const properties = [
             {
@@ -944,6 +1046,42 @@
         let reviews = {}; // Store reviews by property ID
         let currentImageIndex = 0;
         let currentImages = [];
+        let propertyAvailability = {}; // Store availability by property ID
+
+        // Initialize availability from localStorage
+        function loadAvailability() {
+            const stored = localStorage.getItem('propertyAvailability');
+            if (stored) {
+                propertyAvailability = JSON.parse(stored);
+            } else {
+                // Default all properties to available
+                properties.forEach(p => {
+                    propertyAvailability[p.id] = true;
+                });
+            }
+        }
+
+        function saveAvailability() {
+            localStorage.setItem('propertyAvailability', JSON.stringify(propertyAvailability));
+        }
+
+        function toggleAvailability(propertyId) {
+            propertyAvailability[propertyId] = !propertyAvailability[propertyId];
+            saveAvailability();
+            renderOwnerDashboard();
+            updateUnitsAvailableDisplay();
+            // Also re-render the public property grid with updated overlays
+            renderProperties(filteredProperties);
+        }
+
+        function getAvailableCount() {
+            return properties.filter(p => propertyAvailability[p.id] !== false).length;
+        }
+
+        function updateUnitsAvailableDisplay() {
+            const available = getAvailableCount();
+            document.getElementById('unitsAvailableDisplay').textContent = `${available}/${properties.length}`;
+        }
 
         // Initialize reviews from localStorage
         function loadReviews() {
@@ -1115,15 +1253,68 @@
             });
         }
 
-        function loginAsOwner() {
-            currentUser = 'owner';
-            closeLoginModal();
-            document.getElementById('renterSection').classList.add('hidden');
-            document.getElementById('propertyDetailPage').classList.add('hidden');
-            document.getElementById('ownerDashboard').classList.remove('hidden');
-            renderOwnerDashboard();
-            window.scrollTo(0, 0);
+        // Firebase Authentication Functions
+        function showOwnerLoginForm() {
+            document.getElementById('loginOptions').classList.add('hidden');
+            document.getElementById('ownerLoginForm').classList.remove('hidden');
+            document.getElementById('loginError').classList.add('hidden');
+            document.getElementById('ownerEmail').value = '';
+            document.getElementById('ownerPassword').value = '';
         }
+
+        function hideOwnerLoginForm() {
+            document.getElementById('ownerLoginForm').classList.add('hidden');
+            document.getElementById('loginOptions').classList.remove('hidden');
+        }
+
+        // Firebase Login Form Submission
+        document.getElementById('firebaseLoginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('ownerEmail').value;
+            const password = document.getElementById('ownerPassword').value;
+            const loginBtn = document.getElementById('loginSubmitBtn');
+            const errorDiv = document.getElementById('loginError');
+            
+            // Disable button and show loading
+            loginBtn.disabled = true;
+            loginBtn.textContent = 'Signing In...';
+            errorDiv.classList.add('hidden');
+            
+            // Firebase Authentication
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // Successful login
+                    currentUser = 'owner';
+                    closeLoginModal();
+                    hideOwnerLoginForm();
+                    document.getElementById('renterSection').classList.add('hidden');
+                    document.getElementById('propertyDetailPage').classList.add('hidden');
+                    document.getElementById('ownerDashboard').classList.remove('hidden');
+                    renderOwnerDashboard();
+                    window.scrollTo(0, 0);
+                    
+                    // Reset form
+                    loginBtn.disabled = false;
+                    loginBtn.textContent = 'Sign In';
+                })
+                .catch((error) => {
+                    // Login failed
+                    let errorMessage = 'Invalid email or password. Please try again.';
+                    if (error.code === 'auth/user-not-found') {
+                        errorMessage = 'No account found with this email.';
+                    } else if (error.code === 'auth/wrong-password') {
+                        errorMessage = 'Incorrect password. Please try again.';
+                    } else if (error.code === 'auth/too-many-requests') {
+                        errorMessage = 'Too many failed attempts. Please try again later.';
+                    }
+                    
+                    errorDiv.textContent = errorMessage;
+                    errorDiv.classList.remove('hidden');
+                    loginBtn.disabled = false;
+                    loginBtn.textContent = 'Sign In';
+                });
+        });
 
         function loginAsRenter() {
             currentUser = 'renter';
@@ -1135,7 +1326,13 @@
         }
 
         function logout() {
-            goHome();
+            auth.signOut().then(() => {
+                currentUser = null;
+                goHome();
+            }).catch((error) => {
+                console.error('Logout error:', error);
+                goHome();
+            });
         }
 
         // Render Owner Dashboard
