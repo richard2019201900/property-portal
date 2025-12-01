@@ -199,57 +199,41 @@
         <button onclick="nextImage()" class="lightbox-btn lightbox-next">›</button>
     </div>
 
-    <!-- Offer Modal -->
+    <!-- Offer Modal - Copy to Text -->
     <div id="offerModal" class="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center hidden">
         <div class="glass-effect rounded-2xl shadow-2xl p-10 max-w-lg w-full mx-4 transform transition-all max-h-screen overflow-y-auto">
-            <h2 class="text-3xl font-black bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent mb-6 text-center">Submit a Purchase Offer</h2>
-            <p class="text-gray-600 mb-6 text-center font-medium">Interested in owning one of our premium properties? Fill out the form below and Pauly's team will reach out within 24 hours.</p>
-            <form id="offerForm" class="space-y-4">
-                <div>
-                    <label class="block text-gray-700 font-semibold mb-2">Your Name *</label>
-                    <input type="text" id="offerName" required class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 transition">
+            <h2 class="text-3xl font-black bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent mb-4 text-center">Make an Offer</h2>
+            <p id="offerPropertyName" class="text-xl font-bold text-gray-800 mb-4 text-center"></p>
+            <p class="text-gray-600 mb-6 text-center font-medium">Text our team directly to make an offer! Copy the number and message below.</p>
+            
+            <!-- Phone Number Section -->
+            <div class="mb-6">
+                <label class="block text-gray-700 font-bold mb-3">📱 Our Team's Number:</label>
+                <div class="flex items-center gap-3">
+                    <input type="text" id="phoneNumber" value="2057028233" readonly class="flex-1 px-4 py-3 border-2 border-gray-200 rounded-xl bg-gray-50 font-bold text-lg text-gray-800">
+                    <button onclick="copyPhone()" id="copyPhoneBtn" class="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-xl font-bold hover:opacity-90 transition shadow-lg">
+                        Copy
+                    </button>
                 </div>
-                <div>
-                    <label class="block text-gray-700 font-semibold mb-2">Phone Number *</label>
-                    <input type="tel" id="offerPhone" required class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 transition">
-                </div>
-                <div>
-                    <label class="block text-gray-700 font-semibold mb-2">Email *</label>
-                    <input type="email" id="offerEmail" required class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 transition">
-                </div>
-                <div>
-                    <label class="block text-gray-700 font-semibold mb-2">Property You're Interested In *</label>
-                    <select id="offerProperty" required class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 transition">
-                        <option value="">Select a property...</option>
-                        <option value="Eclipse Towers, Apt 105">Eclipse Towers, Apt 105</option>
-                        <option value="Ray Low Apt C">Ray Low Apt C</option>
-                        <option value="Ray Low Apt D">Ray Low Apt D</option>
-                        <option value="1010 Barbareno Rd">1010 Barbareno Rd</option>
-                        <option value="Del Perro Heights, Apt 3">Del Perro Heights, Apt 3</option>
-                        <option value="1032 Chumash Way">1032 Chumash Way</option>
-                        <option value="1234 Chumash Way">1234 Chumash Way</option>
-                        <option value="2024 Chumash Way">2024 Chumash Way</option>
-                        <option value="4568 Chumash Way">4568 Chumash Way</option>
-                        <option value="5426 Chumash Way">5426 Chumash Way</option>
-                        <option value="6502 Chumash Way">6502 Chumash Way</option>
-                        <option value="7896 Chumash Way">7896 Chumash Way</option>
-                        <option value="Oasis Villa 1">Oasis Villa 1</option>
-                        <option value="6908 Great Ocean Highway">6908 Great Ocean Highway</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-gray-700 font-semibold mb-2">Your Offer Amount ($) *</label>
-                    <input type="text" id="offerAmount" required placeholder="e.g. $5,000,000" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 transition">
-                </div>
-                <div>
-                    <label class="block text-gray-700 font-semibold mb-2">Additional Notes</label>
-                    <textarea id="offerNotes" rows="3" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 transition" placeholder="Tell us why you're interested or any special requests..."></textarea>
-                </div>
-                <button type="submit" class="w-full bg-gradient-to-r from-amber-400 to-orange-500 text-gray-900 px-8 py-4 rounded-xl font-black text-lg hover:from-amber-300 hover:to-orange-400 transition shadow-lg">
-                    Submit Offer
+            </div>
+            
+            <!-- Pre-written Message Section -->
+            <div class="mb-6">
+                <label class="block text-gray-700 font-bold mb-3">💬 Your Message (ready to paste):</label>
+                <textarea id="offerMessage" readonly rows="4" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-gray-50 font-medium text-gray-800"></textarea>
+                <button onclick="copyMessage()" id="copyMessageBtn" class="w-full mt-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-xl font-bold hover:opacity-90 transition shadow-lg">
+                    Copy Message
                 </button>
-            </form>
-            <button onclick="closeOfferModal()" class="w-full mt-4 text-gray-600 hover:text-gray-800 font-semibold transition">Cancel</button>
+            </div>
+            
+            <!-- Encouragement -->
+            <div class="bg-gradient-to-r from-amber-100 to-orange-100 p-4 rounded-xl mb-6 text-center">
+                <p class="text-amber-800 font-bold">⚡ Text for the fastest response!</p>
+                <p class="text-amber-700 text-sm mt-1">Our team typically responds within minutes.</p>
+                <p class="text-gray-600 text-xs mt-2">⏰ Please allow up to 24 hours for a response during busy periods.</p>
+            </div>
+            
+            <button onclick="closeOfferModal()" class="w-full bg-gray-200 text-gray-700 px-8 py-4 rounded-xl font-bold hover:bg-gray-300 transition shadow-lg">Close</button>
         </div>
     </div>
 
@@ -767,7 +751,8 @@
                     "images/chumash-2024-1.png",
                     "images/chumash-2024-2.png",
                     "images/chumash-2024-3.png",
-                    "images/chumash-2024-4.png"
+                    "images/chumash-2024-4.png",
+                    "images/chumash-2024-5.png"
                 ]
             },
             {
@@ -785,7 +770,8 @@
                     "images/chumash-4568-1.png",
                     "images/chumash-4568-2.png",
                     "images/chumash-4568-3.png",
-                    "images/chumash-4568-4.png"
+                    "images/chumash-4568-4.png",
+                    "images/chumash-4568-5.png"
                 ]
             },
             {
@@ -803,7 +789,8 @@
                     "images/chumash-5426-1.png",
                     "images/chumash-5426-2.png",
                     "images/chumash-5426-3.png",
-                    "images/chumash-5426-4.png"
+                    "images/chumash-5426-4.png",
+                    "images/chumash-5426-5.png"
                 ]
             },
             {
@@ -984,24 +971,42 @@
         }
 
         // Offer Modal Functions
-        function openOfferModal() {
+        let currentOfferProperty = '';
+        
+        function openOfferModal(propertyTitle) {
+            currentOfferProperty = propertyTitle || 'a property';
+            document.getElementById('offerPropertyName').textContent = 'Contact Us About: ' + currentOfferProperty;
+            document.getElementById('offerMessage').value = `Hi! I'm interested in making an offer on ${currentOfferProperty}. Please contact me ASAP to discuss further.`;
             document.getElementById('offerModal').classList.remove('hidden');
+            
+            // Reset button text
+            document.getElementById('copyPhoneBtn').textContent = 'Copy';
+            document.getElementById('copyMessageBtn').textContent = 'Copy Message';
         }
 
         function closeOfferModal() {
             document.getElementById('offerModal').classList.add('hidden');
         }
-
-        // Offer form submission
-        document.getElementById('offerForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const name = document.getElementById('offerName').value;
-            const property = document.getElementById('offerProperty').value;
-            const amount = document.getElementById('offerAmount').value;
-            alert(`Thank you, ${name}! Your offer of ${amount} for ${property} has been submitted. Pauly's team will contact you within 24 hours.`);
-            this.reset();
-            closeOfferModal();
-        });
+        
+        function copyPhone() {
+            const phone = document.getElementById('phoneNumber').value;
+            navigator.clipboard.writeText(phone).then(() => {
+                document.getElementById('copyPhoneBtn').textContent = 'Copied!';
+                setTimeout(() => {
+                    document.getElementById('copyPhoneBtn').textContent = 'Copy';
+                }, 2000);
+            });
+        }
+        
+        function copyMessage() {
+            const message = document.getElementById('offerMessage').value;
+            navigator.clipboard.writeText(message).then(() => {
+                document.getElementById('copyMessageBtn').textContent = 'Copied!';
+                setTimeout(() => {
+                    document.getElementById('copyMessageBtn').textContent = 'Copy Message';
+                }, 2000);
+            });
+        }
 
         function loginAsOwner() {
             currentUser = 'owner';
@@ -1073,7 +1078,7 @@
                             <div class="text-purple-600 font-black text-2xl mt-1">$${property.monthlyPrice.toLocaleString()}<span class="text-sm font-semibold text-gray-600">/month</span></div>
                         </div>
                         <button onclick="viewProperty(${property.id})" class="w-full gradient-bg text-white px-6 py-3 rounded-xl font-bold hover:opacity-90 transition shadow-lg mb-2">View Details</button>
-                        <button onclick="event.stopPropagation(); openOfferModal()" class="w-full bg-gradient-to-r from-amber-400 to-orange-500 text-gray-900 px-6 py-3 rounded-xl font-bold hover:from-amber-300 hover:to-orange-400 transition shadow-lg">Make an Offer</button>
+                        <button onclick="event.stopPropagation(); openOfferModal('${property.title}')" class="w-full bg-gradient-to-r from-amber-400 to-orange-500 text-gray-900 px-6 py-3 rounded-xl font-bold hover:from-amber-300 hover:to-orange-400 transition shadow-lg">Make an Offer</button>
                     </div>
                 </div>
             `).join('');
@@ -1311,7 +1316,7 @@
                     <button onclick="alert('Contact us at (555) 123-4567 or info@paulyspropertyhub.com to schedule a viewing!')" class="w-full gradient-bg text-white px-8 py-4 rounded-xl font-black text-xl hover:opacity-90 transition shadow-lg mb-4">
                         Contact Us to Rent
                     </button>
-                    <button onclick="openOfferModal()" class="w-full bg-gradient-to-r from-amber-400 to-orange-500 text-gray-900 px-8 py-4 rounded-xl font-black text-xl hover:from-amber-300 hover:to-orange-400 transition shadow-lg">
+                    <button onclick="openOfferModal('${property.title}')" class="w-full bg-gradient-to-r from-amber-400 to-orange-500 text-gray-900 px-8 py-4 rounded-xl font-black text-xl hover:from-amber-300 hover:to-orange-400 transition shadow-lg">
                         Make an Offer to Purchase
                     </button>
                 </div>
