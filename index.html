@@ -762,6 +762,13 @@
             document.body.style.overflow = 'hidden'; // Prevent scrolling
         }
 
+        function openLightboxAtIndex(index) {
+            currentImageIndex = index;
+            document.getElementById('lightboxImage').src = currentImages[index];
+            document.getElementById('lightbox').classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
+        }
+
         function closeLightbox() {
             document.getElementById('lightbox').classList.remove('active');
             document.body.style.overflow = ''; // Restore scrolling
@@ -981,6 +988,9 @@
             
             if (!property) return;
 
+            // Store images globally for lightbox access
+            currentImages = property.images;
+
             document.getElementById('renterSection').classList.add('hidden');
             document.getElementById('propertyDetailPage').classList.remove('hidden');
             
@@ -990,7 +1000,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-6">
                     ${property.images.map((img, index) => `
                         <img src="${img}" alt="${property.title} - Image ${index + 1}" 
-                             onclick="openLightbox(${JSON.stringify(property.images)}, ${index})" 
+                             onclick="openLightboxAtIndex(${index})" 
                              class="property-image-clickable w-full h-80 object-cover rounded-xl shadow-lg ${index === 0 ? 'md:col-span-2' : ''}">
                     `).join('')}
                 </div>
