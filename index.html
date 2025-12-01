@@ -6,78 +6,45 @@
     <title>Pauly's Property Portal - Find Your Dream Home</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <style>
-        * {
-            font-family: 'Inter', sans-serif;
-        }
+        * { font-family: 'Inter', sans-serif; }
         
-        .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        
+        .gradient-bg, .badge { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
         .glass-effect {
             background: rgba(17, 24, 39, 0.85);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        
-        .property-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .property-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        }
-        
-        .badge {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        
+        .property-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .property-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3); }
         .review-card {
             background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        /* Lightbox Styles */
+        /* Lightbox */
         .lightbox {
             display: none;
             position: fixed;
             z-index: 9999;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            inset: 0;
             background: rgba(0, 0, 0, 0.95);
             align-items: center;
             justify-content: center;
         }
-        
-        .lightbox.active {
-            display: flex;
-        }
-        
+        .lightbox.active { display: flex; }
         .lightbox-content {
             max-width: 90%;
             max-height: 90%;
             object-fit: contain;
             animation: zoomIn 0.3s ease;
         }
-        
         @keyframes zoomIn {
-            from {
-                transform: scale(0.8);
-                opacity: 0;
-            }
-            to {
-                transform: scale(1);
-                opacity: 1;
-            }
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
         }
-        
         .lightbox-btn {
             position: absolute;
             background: rgba(255, 255, 255, 0.1);
@@ -95,118 +62,28 @@
             align-items: center;
             justify-content: center;
         }
-        
-        .lightbox-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: scale(1.1);
-        }
-        
-        .lightbox-close {
-            top: 20px;
-            right: 20px;
-        }
-        
-        .lightbox-prev {
-            left: 20px;
-        }
-        
-        .lightbox-next {
-            right: 20px;
-        }
-        
+        .lightbox-btn:hover { background: rgba(255, 255, 255, 0.2); transform: scale(1.1); }
+        .lightbox-close { top: 20px; right: 20px; }
+        .lightbox-prev { left: 20px; }
+        .lightbox-next { right: 20px; }
+
+        /* Clickable Images */
         .property-image-clickable {
             cursor: pointer;
             transition: all 0.3s;
         }
-        
-        .property-image-clickable:hover {
-            opacity: 0.9;
-            transform: scale(1.02);
-        }
+        .property-image-clickable:hover { opacity: 0.9; transform: scale(1.02); }
 
-        /* Image Carousel Styles */
-        .carousel-container {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .carousel-arrow {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(0, 0, 0, 0.6);
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 10;
-            font-size: 20px;
-            font-weight: bold;
-            color: white;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
-            transition: all 0.3s;
-            opacity: 0;
-        }
-
-        .property-card:hover .carousel-arrow {
-            opacity: 1;
-        }
-
-        .carousel-arrow:hover {
-            background: rgba(0, 0, 0, 0.8);
-            transform: translateY(-50%) scale(1.1);
-        }
-
-        .carousel-arrow-left {
-            left: 10px;
-        }
-
-        .carousel-arrow-right {
-            right: 10px;
-        }
-
-        .carousel-dots {
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 6px;
-            z-index: 10;
-        }
-
-        .carousel-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.5);
-            transition: all 0.3s;
-        }
-
-        .carousel-dot.active {
-            background: white;
-            width: 20px;
-            border-radius: 4px;
-        }
-
-        /* Unavailable Property Overlay */
+        /* Unavailable Overlay */
         .unavailable-overlay {
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            inset: 0;
             background: rgba(0, 0, 0, 0.7);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 5;
         }
-
         .unavailable-text {
             background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
             color: white;
@@ -219,7 +96,7 @@
             border: 3px solid white;
         }
 
-        /* Toggle Switch Styles */
+        /* Toggle Switch */
         .toggle-switch {
             position: relative;
             width: 50px;
@@ -229,11 +106,7 @@
             cursor: pointer;
             transition: all 0.3s;
         }
-
-        .toggle-switch.active {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-        }
-
+        .toggle-switch.active { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
         .toggle-switch::after {
             content: '';
             position: absolute;
@@ -246,141 +119,77 @@
             transition: all 0.3s;
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
+        .toggle-switch.active::after { left: 27px; }
 
-        .toggle-switch.active::after {
-            left: 27px;
-        }
-
-        /* Custom Scrollbar for Dark Mode */
-        ::-webkit-scrollbar {
-            width: 10px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #111827; 
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #4b5563; 
-            border-radius: 5px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #6b7280; 
-        }
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #111827; }
+        ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 5px; }
+        ::-webkit-scrollbar-thumb:hover { background: #6b7280; }
     </style>
 </head>
 <body class="bg-gradient-to-br from-gray-900 to-gray-800 min-h-screen text-gray-100">
     <!-- Image Lightbox -->
     <div id="lightbox" class="lightbox">
         <button onclick="closeLightbox()" class="lightbox-btn lightbox-close">✕</button>
-        <button onclick="prevImage()" class="lightbox-btn lightbox-prev">‹</button>
+        <button onclick="changeImage(-1)" class="lightbox-btn lightbox-prev">‹</button>
         <img id="lightboxImage" class="lightbox-content" src="" alt="Property Image">
-        <button onclick="nextImage()" class="lightbox-btn lightbox-next">›</button>
+        <button onclick="changeImage(1)" class="lightbox-btn lightbox-next">›</button>
     </div>
 
-    <!-- Rental Modal - Copy to Text -->
-    <div id="rentalModal" class="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center hidden">
-        <div class="glass-effect rounded-2xl shadow-2xl p-10 max-w-lg w-full mx-4 transform transition-all max-h-screen overflow-y-auto border border-gray-700">
-            <h2 class="text-3xl font-black bg-gradient-to-r from-purple-500 to-blue-600 bg-clip-text text-transparent mb-4 text-center">Rent This Property</h2>
-            <p id="rentalPropertyName" class="text-xl font-bold text-gray-200 mb-4 text-center"></p>
-            <p class="text-gray-400 mb-6 text-center font-medium">Text our team directly to inquire about renting! Copy the number and message below.</p>
+    <!-- Universal Contact Modal -->
+    <div id="contactModal" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center hidden">
+        <div class="glass-effect rounded-2xl shadow-2xl p-10 max-w-lg w-full mx-4 max-h-screen overflow-y-auto border border-gray-700">
+            <h2 id="modalTitle" class="text-3xl font-black bg-clip-text text-transparent mb-4 text-center"></h2>
+            <p id="modalPropertyName" class="text-xl font-bold text-gray-200 mb-4 text-center"></p>
+            <p class="text-gray-400 mb-6 text-center font-medium">Text our team directly! Copy the number and message below.</p>
             
-            <!-- Phone Number Section -->
             <div class="mb-6">
                 <label class="block text-gray-300 font-bold mb-3">📱 Our Team's Number:</label>
                 <div class="flex items-center gap-3">
-                    <input type="text" id="rentalPhoneNumber" value="2057028233" readonly class="flex-1 px-4 py-3 border-2 border-gray-600 rounded-xl bg-gray-700 font-bold text-lg text-white">
-                    <button onclick="copyRentalPhone()" id="copyRentalPhoneBtn" class="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-xl font-bold hover:opacity-90 transition shadow-lg">
-                        Copy
-                    </button>
+                    <input type="text" id="modalPhone" value="2057028233" readonly class="flex-1 px-4 py-3 border-2 border-gray-600 rounded-xl bg-gray-700 font-bold text-lg text-white">
+                    <button onclick="copyToClipboard('modalPhone', this)" class="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-xl font-bold hover:opacity-90 transition shadow-lg">Copy</button>
                 </div>
             </div>
             
-            <!-- Pre-written Message Section -->
             <div class="mb-6">
                 <label class="block text-gray-300 font-bold mb-3">💬 Your Message (ready to paste):</label>
-                <textarea id="rentalMessage" readonly rows="4" class="w-full px-4 py-3 border-2 border-gray-600 rounded-xl bg-gray-700 font-medium text-white"></textarea>
-                <button onclick="copyRentalMessage()" id="copyRentalMessageBtn" class="w-full mt-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-xl font-bold hover:opacity-90 transition shadow-lg">
-                    Copy Message
-                </button>
+                <textarea id="modalMessage" readonly rows="4" class="w-full px-4 py-3 border-2 border-gray-600 rounded-xl bg-gray-700 font-medium text-white"></textarea>
+                <button onclick="copyToClipboard('modalMessage', this)" class="w-full mt-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-xl font-bold hover:opacity-90 transition shadow-lg">Copy Message</button>
             </div>
             
-            <!-- Encouragement -->
-            <div class="bg-gradient-to-r from-purple-900 to-blue-900 p-4 rounded-xl mb-6 text-center border border-purple-700">
-                <p class="text-purple-200 font-bold">⚡ Text for the fastest response!</p>
-                <p class="text-purple-300 text-sm mt-1">Our team typically responds within minutes.</p>
+            <div id="modalAccent" class="p-4 rounded-xl mb-6 text-center border">
+                <p class="font-bold">⚡ Text for the fastest response!</p>
+                <p class="text-sm mt-1">Our team typically responds within minutes.</p>
                 <p class="text-gray-400 text-xs mt-2">⏰ Please allow up to 24 hours for a response during busy periods.</p>
             </div>
             
-            <button onclick="closeRentalModal()" class="w-full bg-gray-700 text-gray-200 px-8 py-4 rounded-xl font-bold hover:bg-gray-600 transition shadow-lg">Close</button>
-        </div>
-    </div>
-
-    <!-- Offer Modal - Copy to Text -->
-    <div id="offerModal" class="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center hidden">
-        <div class="glass-effect rounded-2xl shadow-2xl p-10 max-w-lg w-full mx-4 transform transition-all max-h-screen overflow-y-auto border border-gray-700">
-            <h2 class="text-3xl font-black bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent mb-4 text-center">Make an Offer</h2>
-            <p id="offerPropertyName" class="text-xl font-bold text-gray-200 mb-4 text-center"></p>
-            <p class="text-gray-400 mb-6 text-center font-medium">Text our team directly to make an offer! Copy the number and message below.</p>
-            
-            <!-- Phone Number Section -->
-            <div class="mb-6">
-                <label class="block text-gray-300 font-bold mb-3">📱 Our Team's Number:</label>
-                <div class="flex items-center gap-3">
-                    <input type="text" id="phoneNumber" value="2057028233" readonly class="flex-1 px-4 py-3 border-2 border-gray-600 rounded-xl bg-gray-700 font-bold text-lg text-white">
-                    <button onclick="copyPhone()" id="copyPhoneBtn" class="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-xl font-bold hover:opacity-90 transition shadow-lg">
-                        Copy
-                    </button>
-                </div>
-            </div>
-            
-            <!-- Pre-written Message Section -->
-            <div class="mb-6">
-                <label class="block text-gray-300 font-bold mb-3">💬 Your Message (ready to paste):</label>
-                <textarea id="offerMessage" readonly rows="4" class="w-full px-4 py-3 border-2 border-gray-600 rounded-xl bg-gray-700 font-medium text-white"></textarea>
-                <button onclick="copyMessage()" id="copyMessageBtn" class="w-full mt-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-xl font-bold hover:opacity-90 transition shadow-lg">
-                    Copy Message
-                </button>
-            </div>
-            
-            <!-- Encouragement -->
-            <div class="bg-gradient-to-r from-amber-900 to-orange-900 p-4 rounded-xl mb-6 text-center border border-amber-700">
-                <p class="text-amber-200 font-bold">⚡ Text for the fastest response!</p>
-                <p class="text-amber-300 text-sm mt-1">Our team typically responds within minutes.</p>
-                <p class="text-gray-400 text-xs mt-2">⏰ Please allow up to 24 hours for a response during busy periods.</p>
-            </div>
-            
-            <button onclick="closeOfferModal()" class="w-full bg-gray-700 text-gray-200 px-8 py-4 rounded-xl font-bold hover:bg-gray-600 transition shadow-lg">Close</button>
+            <button onclick="closeModal('contactModal')" class="w-full bg-gray-700 text-gray-200 px-8 py-4 rounded-xl font-bold hover:bg-gray-600 transition shadow-lg">Close</button>
         </div>
     </div>
 
     <!-- Login Modal -->
-    <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center hidden">
-        <div class="glass-effect rounded-2xl shadow-2xl p-10 max-w-md w-full mx-4 transform transition-all border border-gray-700">
-            <!-- Main Login Options -->
+    <div id="loginModal" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center hidden">
+        <div class="glass-effect rounded-2xl shadow-2xl p-10 max-w-md w-full mx-4 border border-gray-700">
             <div id="loginOptions">
                 <h2 class="text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-6 text-center">Welcome to Pauly's Property Portal</h2>
                 <p class="text-gray-300 mb-8 text-center font-medium">Please select your login type</p>
                 <div class="space-y-4">
                     <button onclick="showOwnerLoginForm()" class="w-full gradient-bg text-white px-6 py-4 rounded-xl font-semibold hover:opacity-90 transition flex items-center justify-center space-x-3 shadow-lg">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                        </svg>
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                         <span>Property Owner</span>
                     </button>
                     <button onclick="loginAsRenter()" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-4 rounded-xl font-semibold hover:opacity-90 transition flex items-center justify-center space-x-3 shadow-lg">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         <span>Property Renter</span>
                     </button>
                 </div>
-                <button onclick="closeLoginModal()" class="w-full mt-6 text-gray-400 hover:text-gray-200 font-semibold transition">Close</button>
+                <button onclick="closeModal('loginModal')" class="w-full mt-6 text-gray-400 hover:text-gray-200 font-semibold transition">Close</button>
             </div>
             
-            <!-- Owner Login Form (Hidden by default) -->
             <div id="ownerLoginForm" class="hidden">
                 <h2 class="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-6 text-center">Property Owner Login</h2>
                 <p class="text-gray-300 mb-6 text-center font-medium">Enter your credentials to access the dashboard</p>
-                
                 <form id="firebaseLoginForm" class="space-y-4">
                     <div>
                         <label class="block text-gray-300 font-semibold mb-2">Email</label>
@@ -391,11 +200,8 @@
                         <input type="password" id="ownerPassword" required class="w-full px-4 py-3 border-2 border-gray-600 rounded-xl bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition" placeholder="••••••••">
                     </div>
                     <div id="loginError" class="hidden text-red-400 text-sm font-medium text-center p-3 bg-red-900/30 rounded-xl"></div>
-                    <button type="submit" id="loginSubmitBtn" class="w-full gradient-bg text-white px-6 py-4 rounded-xl font-semibold hover:opacity-90 transition shadow-lg">
-                        Sign In
-                    </button>
+                    <button type="submit" id="loginSubmitBtn" class="w-full gradient-bg text-white px-6 py-4 rounded-xl font-semibold hover:opacity-90 transition shadow-lg">Sign In</button>
                 </form>
-                
                 <button onclick="hideOwnerLoginForm()" class="w-full mt-4 text-gray-400 hover:text-gray-200 font-semibold transition">← Back</button>
             </div>
         </div>
@@ -406,82 +212,66 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
                 <div class="flex items-center space-x-3 cursor-pointer" onclick="goHome()">
-                    <div class="gradient-bg w-20 h-12 rounded-xl flex items-center justify-center font-black text-white text-xl shadow-lg">
-                        PPP
-                    </div>
-                    <h1 class="text-3xl md:text-4xl font-black bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent tracking-tight">Pauly's Property Portal</h1>
+                    <div class="gradient-bg w-20 h-12 rounded-xl flex items-center justify-center font-black text-white text-xl shadow-lg">PPP</div>
+                    <h1 class="text-xl md:text-2xl font-black bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent tracking-tight">Pauly's Property Portal</h1>
                 </div>
                 <div class="hidden md:flex space-x-8">
-                    <a onclick="navigateTo('home')" class="nav-link text-gray-300 hover:text-purple-400 font-semibold cursor-pointer transition">Home</a>
-                    <a onclick="navigateTo('properties')" class="nav-link text-gray-300 hover:text-purple-400 font-semibold cursor-pointer transition">Properties</a>
-                    <a onclick="navigateTo('about')" class="nav-link text-gray-300 hover:text-purple-400 font-semibold cursor-pointer transition">About</a>
-                    <a onclick="navigateTo('contact')" class="nav-link text-gray-300 hover:text-purple-400 font-semibold cursor-pointer transition">Contact</a>
+                    <a onclick="navigateTo('home')" class="text-gray-300 hover:text-purple-400 font-semibold cursor-pointer transition">Home</a>
+                    <a onclick="navigateTo('properties')" class="text-gray-300 hover:text-purple-400 font-semibold cursor-pointer transition">Properties</a>
+                    <a onclick="navigateTo('about')" class="text-gray-300 hover:text-purple-400 font-semibold cursor-pointer transition">About</a>
+                    <a onclick="navigateTo('contact')" class="text-gray-300 hover:text-purple-400 font-semibold cursor-pointer transition">Contact</a>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <button onclick="openLoginModal()" class="hidden md:block gradient-bg text-white px-6 py-3 rounded-xl hover:opacity-90 transition font-semibold shadow-lg">Login</button>
+                    <button id="navAuthBtn" onclick="handleAuthClick()" class="hidden md:block gradient-bg text-white px-6 py-3 rounded-xl hover:opacity-90 transition font-semibold shadow-lg">Login</button>
                     <button id="menuBtn" class="md:hidden text-gray-300">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                        </svg>
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                     </button>
                 </div>
             </div>
         </div>
-        <!-- Mobile Menu -->
         <div id="mobileMenu" class="hidden md:hidden bg-gray-900 border-t border-gray-700">
             <a onclick="navigateTo('home')" class="block px-4 py-3 text-gray-300 hover:bg-gray-800 cursor-pointer">Home</a>
             <a onclick="navigateTo('properties')" class="block px-4 py-3 text-gray-300 hover:bg-gray-800 cursor-pointer">Properties</a>
             <a onclick="navigateTo('about')" class="block px-4 py-3 text-gray-300 hover:bg-gray-800 cursor-pointer">About</a>
             <a onclick="navigateTo('contact')" class="block px-4 py-3 text-gray-300 hover:bg-gray-800 cursor-pointer">Contact</a>
-            <button onclick="openLoginModal()" class="block w-full text-left px-4 py-3 text-purple-400 hover:bg-gray-800 font-semibold">Login</button>
+            <button id="mobileAuthBtn" onclick="handleAuthClick()" class="block w-full text-left px-4 py-3 text-purple-400 hover:bg-gray-800 font-semibold">Login</button>
         </div>
     </nav>
 
-    <!-- Owner Dashboard Section -->
+    <!-- Owner Dashboard -->
     <section id="ownerDashboard" class="hidden min-h-screen py-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center mb-8">
+            <div class="mb-8">
                 <h2 class="text-5xl font-black bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">Property Owner Dashboard</h2>
-                <button onclick="logout()" class="bg-gradient-to-r from-red-500 to-pink-600 text-white px-8 py-3 rounded-xl hover:opacity-90 transition font-semibold shadow-lg">Logout</button>
             </div>
 
-            <!-- Income Summary Cards -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
                 <div class="bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl shadow-2xl p-8 text-white transform hover:scale-105 transition border border-blue-500">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-xl font-bold opacity-90">Total Weekly Income</h3>
-                        <svg class="w-10 h-10 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
+                        <svg class="w-10 h-10 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
-                    <p id="weeklyIncomeDisplay" class="text-4xl md:text-5xl font-black break-words">$1.1M</p>
+                    <p id="weeklyIncomeDisplay" class="text-4xl md:text-5xl font-black break-words">$0</p>
                     <p class="text-sm opacity-80 mt-3 font-medium">From all properties</p>
                 </div>
-
                 <div class="bg-gradient-to-br from-green-600 to-emerald-800 rounded-2xl shadow-2xl p-8 text-white transform hover:scale-105 transition border border-green-500">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-xl font-bold opacity-90">Total Monthly Income</h3>
-                        <svg class="w-10 h-10 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
-                        </svg>
+                        <svg class="w-10 h-10 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
                     </div>
-                    <p id="monthlyIncomeDisplay" class="text-4xl md:text-5xl font-black break-words">$3.4M</p>
+                    <p id="monthlyIncomeDisplay" class="text-4xl md:text-5xl font-black break-words">$0</p>
                     <p class="text-sm opacity-80 mt-3 font-medium">Discounted rate</p>
                 </div>
-
                 <div class="bg-gradient-to-br from-purple-600 to-purple-800 rounded-2xl shadow-2xl p-8 text-white transform hover:scale-105 transition border border-purple-500">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-xl font-bold opacity-90">Total Units Available</h3>
-                        <svg class="w-10 h-10 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-                        </svg>
+                        <svg class="w-10 h-10 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
                     </div>
-                    <p id="unitsAvailableDisplay" class="text-4xl md:text-5xl font-black break-words">14/14</p>
+                    <p id="unitsAvailableDisplay" class="text-4xl md:text-5xl font-black break-words">0/0</p>
                     <p class="text-sm opacity-80 mt-3 font-medium">Properties available</p>
                 </div>
             </div>
 
-            <!-- Property List for Owners -->
             <div class="glass-effect rounded-2xl shadow-2xl p-8">
                 <h3 class="text-3xl font-bold text-gray-200 mb-6">Your Properties</h3>
                 <div class="overflow-x-auto">
@@ -497,9 +287,7 @@
                                 <th class="px-6 py-4 font-bold rounded-tr-xl">Monthly</th>
                             </tr>
                         </thead>
-                        <tbody id="ownerPropertiesTable">
-                            <!-- Properties will be dynamically inserted here -->
-                        </tbody>
+                        <tbody id="ownerPropertiesTable"></tbody>
                     </table>
                 </div>
             </div>
@@ -510,21 +298,13 @@
     <section id="propertyDetailPage" class="hidden min-h-screen py-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <button onclick="goBack()" class="mb-6 flex items-center space-x-2 text-purple-400 hover:text-purple-300 font-semibold transition">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                </svg>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                 <span>Back to Properties</span>
             </button>
-            
-            <div id="propertyDetailContent" class="glass-effect rounded-2xl shadow-2xl overflow-hidden">
-                <!-- Content will be dynamically inserted -->
-            </div>
+            <div id="propertyDetailContent" class="glass-effect rounded-2xl shadow-2xl overflow-hidden"></div>
 
-            <!-- Reviews Section -->
             <div class="mt-12 glass-effect rounded-2xl shadow-2xl p-8">
                 <h3 class="text-3xl font-bold text-gray-200 mb-6">Reviews</h3>
-                
-                <!-- Review Form -->
                 <div class="mb-8 bg-gray-800 p-6 rounded-xl border border-gray-700">
                     <h4 class="text-xl font-bold text-gray-200 mb-4">Leave a Review</h4>
                     <form id="reviewForm" class="space-y-4">
@@ -549,24 +329,17 @@
                         <button type="submit" class="gradient-bg text-white px-8 py-3 rounded-xl font-semibold hover:opacity-90 transition shadow-lg">Submit Review</button>
                     </form>
                 </div>
-
-                <!-- Reviews Display -->
-                <div id="reviewsDisplay" class="space-y-4">
-                    <!-- Reviews will be displayed here -->
-                </div>
+                <div id="reviewsDisplay" class="space-y-4"></div>
             </div>
         </div>
     </section>
 
-    <!-- Renter Section (Default View) -->
+    <!-- Renter Section -->
     <div id="renterSection">
-        <!-- Hero Section -->
         <section id="home" class="gradient-bg text-white py-24">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                 <h2 class="text-5xl md:text-6xl font-black mb-6">Live Like You Mean It.</h2>
                 <p class="text-2xl mb-12 font-light max-w-4xl mx-auto">Pauly's exclusive collection. Premium rentals. Professionally managed. Scroll down and find your next home — or make an offer to own it.</p>
-                
-                <!-- Search Bar -->
                 <div class="max-w-5xl mx-auto glass-effect rounded-2xl shadow-2xl p-8">
                     <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
                         <select id="searchType" class="px-5 py-4 border-2 border-gray-600 rounded-xl bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 font-medium transition">
@@ -595,38 +368,31 @@
             </div>
         </section>
 
-        <!-- Filter and Sort Section -->
         <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
             <div class="flex flex-wrap gap-4 items-center justify-between">
-                <div class="flex gap-3 flex-wrap">
+                <div class="flex gap-3 flex-wrap" id="filterButtons">
                     <button onclick="filterProperties('all')" class="filter-btn active px-6 py-3 rounded-xl gradient-bg text-white font-bold shadow-lg">All</button>
                     <button onclick="filterProperties('house')" class="filter-btn px-6 py-3 rounded-xl bg-gray-700 text-gray-200 font-bold hover:shadow-lg transition shadow">Houses</button>
                     <button onclick="filterProperties('apartment')" class="filter-btn px-6 py-3 rounded-xl bg-gray-700 text-gray-200 font-bold hover:shadow-lg transition shadow">Apartments</button>
                     <button onclick="filterProperties('condo')" class="filter-btn px-6 py-3 rounded-xl bg-gray-700 text-gray-200 font-bold hover:shadow-lg transition shadow">Condos</button>
                     <button onclick="filterProperties('villa')" class="filter-btn px-6 py-3 rounded-xl bg-gray-700 text-gray-200 font-bold hover:shadow-lg transition shadow">Villas</button>
                 </div>
-                <div>
-                    <select id="sortBy" onchange="sortProperties()" class="px-6 py-3 border-2 border-gray-600 rounded-xl bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 font-semibold shadow">
-                        <option value="">Sort By</option>
-                        <option value="price-low">Price: Low to High</option>
-                        <option value="price-high">Price: High to Low</option>
-                        <option value="bedrooms">Bedrooms</option>
-                        <option value="interior">Interior Type</option>
-                        <option value="storage">Storage Space</option>
-                    </select>
-                </div>
+                <select id="sortBy" onchange="sortProperties()" class="px-6 py-3 border-2 border-gray-600 rounded-xl bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 font-semibold shadow">
+                    <option value="">Sort By</option>
+                    <option value="price-low">Price: Low to High</option>
+                    <option value="price-high">Price: High to Low</option>
+                    <option value="bedrooms">Bedrooms</option>
+                    <option value="interior">Interior Type</option>
+                    <option value="storage">Storage Space</option>
+                </select>
             </div>
         </section>
 
-        <!-- Properties Grid -->
         <section id="properties" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <h3 class="text-4xl font-black text-white mb-10">Featured Properties</h3>
-            <div id="propertiesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-                <!-- Properties will be dynamically inserted here -->
-            </div>
+            <div id="propertiesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"></div>
         </section>
 
-        <!-- About Section -->
         <section id="about" class="py-20">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-16">
@@ -636,27 +402,21 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
                     <div class="text-center p-8 glass-effect rounded-2xl shadow-lg transform hover:scale-105 transition">
                         <div class="gradient-bg w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-                            <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                            </svg>
+                            <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                         </div>
                         <h4 class="text-2xl font-bold mb-3 text-white">Lightning-Fast Responses</h4>
                         <p class="text-gray-300 font-medium">Text us and get a reply in minutes, not days. We're always ready.</p>
                     </div>
                     <div class="text-center p-8 glass-effect rounded-2xl shadow-lg transform hover:scale-105 transition">
                         <div class="gradient-bg w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-                            <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                            </svg>
+                            <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                         </div>
                         <h4 class="text-2xl font-bold mb-3 text-white">World-Class Team</h4>
                         <p class="text-gray-300 font-medium">Our sales and support crew treats every client like family.</p>
                     </div>
                     <div class="text-center p-8 glass-effect rounded-2xl shadow-lg transform hover:scale-105 transition">
                         <div class="gradient-bg w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-                            <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
+                            <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </div>
                         <h4 class="text-2xl font-bold mb-3 text-white">Unbeatable Value</h4>
                         <p class="text-gray-300 font-medium">Premium properties at prices that make sense. No games, just deals.</p>
@@ -665,35 +425,24 @@
             </div>
         </section>
 
-        <!-- Contact Section -->
         <section id="contact" class="bg-gradient-to-br from-gray-800 to-gray-900 py-20 border-t border-gray-700">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="max-w-3xl mx-auto">
                     <h3 class="text-5xl font-black text-white mb-6 text-center">Get In Touch</h3>
                     <p class="text-xl text-gray-400 text-center mb-12 font-medium">Have questions? Text our team directly for the fastest response!</p>
-                    
                     <div class="glass-effect rounded-2xl shadow-2xl p-10">
-                        <!-- Phone Number Section -->
                         <div class="mb-8">
                             <label class="block text-gray-300 font-bold mb-3 text-lg">📱 Our Team's Number:</label>
                             <div class="flex items-center gap-3">
-                                <input type="text" id="contactPhoneNumber" value="2057028233" readonly class="flex-1 px-5 py-4 border-2 border-gray-600 rounded-xl bg-gray-700 font-bold text-xl text-white">
-                                <button onclick="copyContactPhone()" id="copyContactPhoneBtn" class="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-8 py-4 rounded-xl font-bold hover:opacity-90 transition shadow-lg text-lg">
-                                    Copy
-                                </button>
+                                <input type="text" id="contactPhone" value="2057028233" readonly class="flex-1 px-5 py-4 border-2 border-gray-600 rounded-xl bg-gray-700 font-bold text-xl text-white">
+                                <button onclick="copyToClipboard('contactPhone', this)" class="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-8 py-4 rounded-xl font-bold hover:opacity-90 transition shadow-lg text-lg">Copy</button>
                             </div>
                         </div>
-                        
-                        <!-- Pre-written Message Section -->
                         <div class="mb-8">
                             <label class="block text-gray-300 font-bold mb-3 text-lg">💬 Your Message (ready to paste):</label>
-                            <textarea id="contactMessageText" readonly rows="4" class="w-full px-5 py-4 border-2 border-gray-600 rounded-xl bg-gray-700 font-medium text-white text-lg">Hi! I'm interested in learning more about your available properties. Please contact me at your earliest convenience. Thank you!</textarea>
-                            <button onclick="copyContactMessage()" id="copyContactMessageBtn" class="w-full mt-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-8 py-4 rounded-xl font-bold hover:opacity-90 transition shadow-lg text-lg">
-                                Copy Message
-                            </button>
+                            <textarea id="contactMessage" readonly rows="4" class="w-full px-5 py-4 border-2 border-gray-600 rounded-xl bg-gray-700 font-medium text-white text-lg">Hi! I'm interested in learning more about your available properties. Please contact me at your earliest convenience. Thank you!</textarea>
+                            <button onclick="copyToClipboard('contactMessage', this)" class="w-full mt-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-8 py-4 rounded-xl font-bold hover:opacity-90 transition shadow-lg text-lg">Copy Message</button>
                         </div>
-                        
-                        <!-- Encouragement -->
                         <div class="bg-gradient-to-r from-purple-900 to-blue-900 p-6 rounded-xl text-center border border-purple-700">
                             <p class="text-purple-200 font-black text-xl">⚡ Text for the fastest response!</p>
                             <p class="text-purple-300 font-medium mt-2">Our team typically responds within minutes.</p>
@@ -705,18 +454,13 @@
         </section>
     </div>
 
-    <!-- Footer -->
     <footer class="bg-gray-900 text-white py-12 border-t border-gray-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <!-- Moved Logo from Top Center to Grid Column 1 -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
                 <div>
                     <h4 class="text-2xl font-black mb-5 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">Pauly's Property Hub</h4>
                     <p class="text-gray-400 font-medium mb-6">Your trusted partner in finding the perfect property.</p>
-                    <!-- Linkable Logo -->
-                    <div onclick="goHome()" class="cursor-pointer gradient-bg w-20 h-20 rounded-2xl flex items-center justify-center font-black text-white text-3xl shadow-lg hover:scale-105 transition transform">
-                        PPP
-                    </div>
+                    <div onclick="goHome()" class="cursor-pointer gradient-bg w-20 h-20 rounded-2xl flex items-center justify-center font-black text-white text-3xl shadow-lg hover:scale-105 transition transform">PPP</div>
                 </div>
                 <div>
                     <h4 class="text-2xl font-black mb-5">Quick Links</h4>
@@ -765,344 +509,82 @@
             messagingSenderId: "667779460256",
             appId: "1:667779460256:web:c8f3c34c7e432eca73adc5"
         };
-
-        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
 
-        // Property data with updated information
+        // Property data
         const properties = [
-            {
-                id: 1,
-                title: "Eclipse Towers, Apt 105",
-                type: "apartment",
-                interiorType: "Instance",
-                location: "Eclipse Blvd, LS",
-                weeklyPrice: 35000,
-                monthlyPrice: 110000,
-                storage: 600,
-                bedrooms: 1,
-                bathrooms: 1,
-                videoUrl: "https://r2.fivemanage.com/zcu3v941VVMaPFLkCJ69T/EclipseTowersApt105-1080pwithsound.mp4",
-                images: [
-                    "images/eclipse-towers-1.png",
-                    "images/eclipse-towers-2.png",
-                    "images/eclipse-towers-3.png",
-                    "images/eclipse-towers-4.png"
-                ]
-            },
-            {
-                id: 2,
-                title: "Ray Low Apt C",
-                type: "apartment",
-                interiorType: "Instance",
-                location: "Southside, LS",
-                weeklyPrice: 40000,
-                monthlyPrice: 125000,
-                storage: 900,
-                bedrooms: 1,
-                bathrooms: 1,
-                images: [
-                    "images/ray-low-c-1.png",
-                    "images/ray-low-c-2.png",
-                    "images/ray-low-c-3.png",
-                    "images/ray-low-c-4.png",
-                    "images/ray-low-c-5.png",
-                    "images/ray-low-c-6.png"
-                ]
-            },
-            {
-                id: 3,
-                title: "Ray Low Apt D",
-                type: "apartment",
-                interiorType: "Instance",
-                location: "Southside, LS",
-                weeklyPrice: 40000,
-                monthlyPrice: 125000,
-                storage: 900,
-                bedrooms: 1,
-                bathrooms: 1,
-                images: [
-                    "images/ray-low-d-1.png",
-                    "images/ray-low-d-2.png",
-                    "images/ray-low-d-3.png",
-                    "images/ray-low-d-4.png"
-                ]
-            },
-            {
-                id: 4,
-                title: "1010 Barbareno Rd",
-                type: "condo",
-                interiorType: "Instance",
-                location: "South Chumash, LS",
-                weeklyPrice: 50000,
-                monthlyPrice: 155000,
-                storage: 1200,
-                bedrooms: 1,
-                bathrooms: 1,
-                images: [
-                    "images/barbareno-1.png",
-                    "images/barbareno-2.png",
-                    "images/barbareno-3.png",
-                    "images/barbareno-4.png",
-                    "images/barbareno-5.png",
-                    "images/barbareno-6.png",
-                    "images/barbareno-7.png"
-                ]
-            },
-            {
-                id: 5,
-                title: "Del Perro Heights, Apt 3",
-                type: "apartment",
-                interiorType: "Instance",
-                location: "Del Perro Blvd, LS",
-                weeklyPrice: 55000,
-                monthlyPrice: 170000,
-                storage: 1050,
-                bedrooms: 1,
-                bathrooms: 1,
-                images: [
-                    "images/del-perro-1.png",
-                    "images/del-perro-2.png",
-                    "images/del-perro-3.png",
-                    "images/del-perro-4.png"
-                ]
-            },
-            {
-                id: 6,
-                title: "1032 Chumash Way",
-                type: "house",
-                interiorType: "Instance",
-                location: "South Chumash, LS",
-                weeklyPrice: 65000,
-                monthlyPrice: 200000,
-                storage: 1350,
-                bedrooms: 1,
-                bathrooms: 1,
-                images: [
-                    "images/chumash-1032-1.png",
-                    "images/chumash-1032-2.png",
-                    "images/chumash-1032-3.png",
-                    "images/chumash-1032-4.png"
-                ]
-            },
-            {
-                id: 7,
-                title: "1234 Chumash Way",
-                type: "house",
-                interiorType: "Instance",
-                location: "South Chumash, LS",
-                weeklyPrice: 65000,
-                monthlyPrice: 200000,
-                storage: 1350,
-                bedrooms: 1,
-                bathrooms: 1,
-                images: [
-                    "images/chumash-1234-1.png",
-                    "images/chumash-1234-2.png",
-                    "images/chumash-1234-3.png",
-                    "images/chumash-1234-4.png",
-                    "images/chumash-1234-5.png"
-                ]
-            },
-            {
-                id: 8,
-                title: "2024 Chumash Way",
-                type: "house",
-                interiorType: "Instance",
-                location: "South Chumash, LS",
-                weeklyPrice: 65000,
-                monthlyPrice: 200000,
-                storage: 1350,
-                bedrooms: 1,
-                bathrooms: 1,
-                images: [
-                    "images/chumash-2024-1.png",
-                    "images/chumash-2024-2.png",
-                    "images/chumash-2024-3.png",
-                    "images/chumash-2024-4.png",
-                    "images/chumash-2024-5.png"
-                ]
-            },
-            {
-                id: 9,
-                title: "4568 Chumash Way",
-                type: "condo",
-                interiorType: "Instance",
-                location: "South Chumash, LS",
-                weeklyPrice: 65000,
-                monthlyPrice: 200000,
-                storage: 1350,
-                bedrooms: 1,
-                bathrooms: 1,
-                images: [
-                    "images/chumash-4568-1.png",
-                    "images/chumash-4568-2.png",
-                    "images/chumash-4568-3.png",
-                    "images/chumash-4568-4.png",
-                    "images/chumash-4568-5.png"
-                ]
-            },
-            {
-                id: 10,
-                title: "5426 Chumash Way",
-                type: "condo",
-                interiorType: "Instance",
-                location: "South Chumash, LS",
-                weeklyPrice: 65000,
-                monthlyPrice: 200000,
-                storage: 1350,
-                bedrooms: 1,
-                bathrooms: 1,
-                images: [
-                    "images/chumash-5426-1.png",
-                    "images/chumash-5426-2.png",
-                    "images/chumash-5426-3.png",
-                    "images/chumash-5426-4.png",
-                    "images/chumash-5426-5.png"
-                ]
-            },
-            {
-                id: 11,
-                title: "6502 Chumash Way",
-                type: "house",
-                interiorType: "Instance",
-                location: "South Chumash, LS",
-                weeklyPrice: 75000,
-                monthlyPrice: 230000,
-                storage: 1350,
-                bedrooms: 1,
-                bathrooms: 1,
-                images: [
-                    "images/chumash-6502-1.png",
-                    "images/chumash-6502-2.png",
-                    "images/chumash-6502-3.png",
-                    "images/chumash-6502-4.png",
-                    "images/chumash-6502-5.png"
-                ]
-            },
-            {
-                id: 12,
-                title: "7896 Chumash Way",
-                type: "house",
-                interiorType: "Instance",
-                location: "South Chumash, LS",
-                weeklyPrice: 75000,
-                monthlyPrice: 230000,
-                storage: 1350,
-                bedrooms: 1,
-                bathrooms: 1,
-                images: [
-                    "images/chumash-7896-1.png",
-                    "images/chumash-7896-2.png",
-                    "images/chumash-7896-3.png",
-                    "images/chumash-7896-4.png",
-                    "images/chumash-7896-5.png"
-                ]
-            },
-            {
-                id: 13,
-                title: "Oasis Villa 1",
-                type: "villa",
-                interiorType: "Walk-in",
-                location: "Oasis Resort, LS",
-                weeklyPrice: 150000,
-                monthlyPrice: 455000,
-                storage: 1650,
-                bedrooms: 1,
-                bathrooms: 1,
-                images: [
-                    "images/oasis-villa-1.png",
-                    "images/oasis-villa-2.png",
-                    "images/oasis-villa-3.png",
-                    "images/oasis-villa-4.png"
-                ]
-            },
-            {
-                id: 14,
-                title: "6908 Great Ocean Highway",
-                type: "house",
-                interiorType: "Walk-in",
-                location: "Chumash, LS",
-                weeklyPrice: 250000,
-                monthlyPrice: 755000,
-                storage: 1800,
-                bedrooms: 2,
-                bathrooms: 2,
-                features: "Giant 500-gallon indoor aquarium, outdoor kitchen, infinity pool, private helicopter landing pad, long private driveway",
-                images: [
-                    "images/great-ocean-1.png",
-                    "images/great-ocean-2.png",
-                    "images/great-ocean-3.png",
-                    "images/great-ocean-4.png"
-                ]
-            }
+            { id: 1, title: "Eclipse Towers, Apt 105", type: "apartment", interiorType: "Instance", location: "Eclipse Blvd, LS", weeklyPrice: 35000, monthlyPrice: 110000, storage: 600, bedrooms: 1, bathrooms: 1, videoUrl: "https://r2.fivemanage.com/zcu3v941VVMaPFLkCJ69T/EclipseTowersApt105-1080pwithsound.mp4", images: ["images/eclipse-towers-1.png", "images/eclipse-towers-2.png", "images/eclipse-towers-3.png", "images/eclipse-towers-4.png"] },
+            { id: 2, title: "Ray Low Apt C", type: "apartment", interiorType: "Instance", location: "Southside, LS", weeklyPrice: 40000, monthlyPrice: 125000, storage: 900, bedrooms: 1, bathrooms: 1, images: ["images/ray-low-c-1.png", "images/ray-low-c-2.png", "images/ray-low-c-3.png", "images/ray-low-c-4.png", "images/ray-low-c-5.png", "images/ray-low-c-6.png"] },
+            { id: 3, title: "Ray Low Apt D", type: "apartment", interiorType: "Instance", location: "Southside, LS", weeklyPrice: 40000, monthlyPrice: 125000, storage: 900, bedrooms: 1, bathrooms: 1, images: ["images/ray-low-d-1.png", "images/ray-low-d-2.png", "images/ray-low-d-3.png", "images/ray-low-d-4.png"] },
+            { id: 4, title: "1010 Barbareno Rd", type: "condo", interiorType: "Instance", location: "South Chumash, LS", weeklyPrice: 50000, monthlyPrice: 155000, storage: 1200, bedrooms: 1, bathrooms: 1, images: ["images/barbareno-1.png", "images/barbareno-2.png", "images/barbareno-3.png", "images/barbareno-4.png", "images/barbareno-5.png", "images/barbareno-6.png", "images/barbareno-7.png"] },
+            { id: 5, title: "Del Perro Heights, Apt 3", type: "apartment", interiorType: "Instance", location: "Del Perro Blvd, LS", weeklyPrice: 55000, monthlyPrice: 170000, storage: 1050, bedrooms: 1, bathrooms: 1, images: ["images/del-perro-1.png", "images/del-perro-2.png", "images/del-perro-3.png", "images/del-perro-4.png"] },
+            { id: 6, title: "1032 Chumash Way", type: "house", interiorType: "Instance", location: "South Chumash, LS", weeklyPrice: 65000, monthlyPrice: 200000, storage: 1350, bedrooms: 1, bathrooms: 1, images: ["images/chumash-1032-1.png", "images/chumash-1032-2.png", "images/chumash-1032-3.png", "images/chumash-1032-4.png"] },
+            { id: 7, title: "1234 Chumash Way", type: "house", interiorType: "Instance", location: "South Chumash, LS", weeklyPrice: 65000, monthlyPrice: 200000, storage: 1350, bedrooms: 1, bathrooms: 1, images: ["images/chumash-1234-1.png", "images/chumash-1234-2.png", "images/chumash-1234-3.png", "images/chumash-1234-4.png", "images/chumash-1234-5.png"] },
+            { id: 8, title: "2024 Chumash Way", type: "house", interiorType: "Instance", location: "South Chumash, LS", weeklyPrice: 65000, monthlyPrice: 200000, storage: 1350, bedrooms: 1, bathrooms: 1, images: ["images/chumash-2024-1.png", "images/chumash-2024-2.png", "images/chumash-2024-3.png", "images/chumash-2024-4.png", "images/chumash-2024-5.png"] },
+            { id: 9, title: "4568 Chumash Way", type: "condo", interiorType: "Instance", location: "South Chumash, LS", weeklyPrice: 65000, monthlyPrice: 200000, storage: 1350, bedrooms: 1, bathrooms: 1, images: ["images/chumash-4568-1.png", "images/chumash-4568-2.png", "images/chumash-4568-3.png", "images/chumash-4568-4.png", "images/chumash-4568-5.png"] },
+            { id: 10, title: "5426 Chumash Way", type: "condo", interiorType: "Instance", location: "South Chumash, LS", weeklyPrice: 65000, monthlyPrice: 200000, storage: 1350, bedrooms: 1, bathrooms: 1, images: ["images/chumash-5426-1.png", "images/chumash-5426-2.png", "images/chumash-5426-3.png", "images/chumash-5426-4.png", "images/chumash-5426-5.png"] },
+            { id: 11, title: "6502 Chumash Way", type: "house", interiorType: "Instance", location: "South Chumash, LS", weeklyPrice: 75000, monthlyPrice: 230000, storage: 1350, bedrooms: 1, bathrooms: 1, images: ["images/chumash-6502-1.png", "images/chumash-6502-2.png", "images/chumash-6502-3.png", "images/chumash-6502-4.png", "images/chumash-6502-5.png"] },
+            { id: 12, title: "7896 Chumash Way", type: "house", interiorType: "Instance", location: "South Chumash, LS", weeklyPrice: 75000, monthlyPrice: 230000, storage: 1350, bedrooms: 1, bathrooms: 1, images: ["images/chumash-7896-1.png", "images/chumash-7896-2.png", "images/chumash-7896-3.png", "images/chumash-7896-4.png", "images/chumash-7896-5.png"] },
+            { id: 13, title: "Oasis Villa 1", type: "villa", interiorType: "Walk-in", location: "Oasis Resort, LS", weeklyPrice: 150000, monthlyPrice: 455000, storage: 1650, bedrooms: 1, bathrooms: 1, images: ["images/oasis-villa-1.png", "images/oasis-villa-2.png", "images/oasis-villa-3.png", "images/oasis-villa-4.png"] },
+            { id: 14, title: "6908 Great Ocean Highway", type: "house", interiorType: "Walk-in", location: "Chumash, LS", weeklyPrice: 250000, monthlyPrice: 755000, storage: 1800, bedrooms: 2, bathrooms: 2, features: "Giant 500-gallon indoor aquarium, outdoor kitchen, infinity pool, private helicopter landing pad, long private driveway", images: ["images/great-ocean-1.png", "images/great-ocean-2.png", "images/great-ocean-3.png", "images/great-ocean-4.png"] }
         ];
 
+        // State
         let filteredProperties = [...properties];
-        let currentFilter = 'all';
         let currentUser = null;
         let currentPropertyId = null;
-        let reviews = {}; // Store reviews by property ID
+        let reviews = JSON.parse(localStorage.getItem('propertyReviews') || '{}');
         let currentImageIndex = 0;
         let currentImages = [];
-        let propertyAvailability = {}; // Store availability by property ID
+        let propertyAvailability = JSON.parse(localStorage.getItem('propertyAvailability') || '{}');
 
-        // Initialize availability from localStorage
-        function loadAvailability() {
-            const stored = localStorage.getItem('propertyAvailability');
-            if (stored) {
-                propertyAvailability = JSON.parse(stored);
+        // Initialize availability defaults
+        properties.forEach(p => { if (propertyAvailability[p.id] === undefined) propertyAvailability[p.id] = true; });
+
+        // Utility Functions
+        const formatIncome = amt => amt >= 1e6 ? `$${(amt/1e6).toFixed(1)}M` : amt >= 1e3 ? `$${(amt/1e3).toFixed(0)}k` : `$${amt.toLocaleString()}`;
+        const saveToStorage = (key, data) => localStorage.setItem(key, JSON.stringify(data));
+        
+        function copyToClipboard(elementId, btn) {
+            const el = document.getElementById(elementId);
+            const text = el.value || el.textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                const origText = btn.textContent;
+                btn.textContent = 'Copied!';
+                setTimeout(() => btn.textContent = origText, 2000);
+            });
+        }
+
+        // Modal Functions
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+        function openContactModal(type, propertyTitle) {
+            const modal = document.getElementById('contactModal');
+            const title = document.getElementById('modalTitle');
+            const accent = document.getElementById('modalAccent');
+            const propName = document.getElementById('modalPropertyName');
+            const message = document.getElementById('modalMessage');
+            
+            if (type === 'rent') {
+                title.textContent = 'Rent This Property';
+                title.className = 'text-3xl font-black bg-gradient-to-r from-purple-500 to-blue-600 bg-clip-text text-transparent mb-4 text-center';
+                accent.className = 'bg-gradient-to-r from-purple-900 to-blue-900 p-4 rounded-xl mb-6 text-center border border-purple-700';
+                accent.querySelector('p').className = 'text-purple-200 font-bold';
+                accent.querySelectorAll('p')[1].className = 'text-purple-300 text-sm mt-1';
+                propName.textContent = 'Rent: ' + propertyTitle;
+                message.value = `Hi! I'm interested in renting ${propertyTitle}. Please contact me ASAP to discuss availability and next steps.`;
             } else {
-                // Default all properties to available
-                properties.forEach(p => {
-                    propertyAvailability[p.id] = true;
-                });
+                title.textContent = 'Make an Offer';
+                title.className = 'text-3xl font-black bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent mb-4 text-center';
+                accent.className = 'bg-gradient-to-r from-amber-900 to-orange-900 p-4 rounded-xl mb-6 text-center border border-amber-700';
+                accent.querySelector('p').className = 'text-amber-200 font-bold';
+                accent.querySelectorAll('p')[1].className = 'text-amber-300 text-sm mt-1';
+                propName.textContent = 'Contact Us About: ' + propertyTitle;
+                message.value = `Hi! I'm interested in making an offer on ${propertyTitle}. Please contact me ASAP to discuss further.`;
             }
-        }
-
-        function saveAvailability() {
-            localStorage.setItem('propertyAvailability', JSON.stringify(propertyAvailability));
-        }
-
-        function toggleAvailability(propertyId) {
-            propertyAvailability[propertyId] = !propertyAvailability[propertyId];
-            saveAvailability();
-            renderOwnerDashboard();
-            updateUnitsAvailableDisplay();
-            // Also re-render the public property grid with updated overlays
-            renderProperties(filteredProperties);
-        }
-
-        function getAvailableCount() {
-            return properties.filter(p => propertyAvailability[p.id] !== false).length;
-        }
-
-        function updateUnitsAvailableDisplay() {
-            const available = getAvailableCount();
-            document.getElementById('unitsAvailableDisplay').textContent = `${available}/${properties.length}`;
-        }
-
-        // Format income for display
-        function formatIncome(amount) {
-            if (amount >= 1000000) {
-                return '$' + (amount / 1000000).toFixed(1) + 'M';
-            } else if (amount >= 1000) {
-                return '$' + (amount / 1000).toFixed(0) + 'k';
-            }
-            return '$' + amount.toLocaleString();
-        }
-
-        // Initialize reviews from localStorage
-        function loadReviews() {
-            const stored = localStorage.getItem('propertyReviews');
-            if (stored) {
-                reviews = JSON.parse(stored);
-            }
-        }
-
-        function saveReviews() {
-            localStorage.setItem('propertyReviews', JSON.stringify(reviews));
+            openModal('contactModal');
         }
 
         // Lightbox Functions
@@ -1111,65 +593,70 @@
             currentImageIndex = index;
             document.getElementById('lightboxImage').src = images[index];
             document.getElementById('lightbox').classList.add('active');
-            document.body.style.overflow = 'hidden'; // Prevent scrolling
-        }
-
-        function openLightboxAtIndex(index) {
-            currentImageIndex = index;
-            document.getElementById('lightboxImage').src = currentImages[index];
-            document.getElementById('lightbox').classList.add('active');
-            document.body.style.overflow = 'hidden'; // Prevent scrolling
+            document.body.style.overflow = 'hidden';
         }
 
         function closeLightbox() {
             document.getElementById('lightbox').classList.remove('active');
-            document.body.style.overflow = ''; // Restore scrolling
+            document.body.style.overflow = '';
         }
 
-        function nextImage() {
-            currentImageIndex = (currentImageIndex + 1) % currentImages.length;
+        function changeImage(dir) {
+            currentImageIndex = (currentImageIndex + dir + currentImages.length) % currentImages.length;
             document.getElementById('lightboxImage').src = currentImages[currentImageIndex];
         }
 
-        function prevImage() {
-            currentImageIndex = (currentImageIndex - 1 + currentImages.length) % currentImages.length;
-            document.getElementById('lightboxImage').src = currentImages[currentImageIndex];
-        }
-
-        // Keyboard navigation for lightbox
-        document.addEventListener('keydown', function(e) {
+        document.addEventListener('keydown', e => {
             if (!document.getElementById('lightbox').classList.contains('active')) return;
-            
             if (e.key === 'Escape') closeLightbox();
-            if (e.key === 'ArrowRight') nextImage();
-            if (e.key === 'ArrowLeft') prevImage();
+            if (e.key === 'ArrowRight') changeImage(1);
+            if (e.key === 'ArrowLeft') changeImage(-1);
         });
 
-        // Navigation Functions
+        // Navigation & Auth Button
+        function updateAuthButton(isLoggedIn) {
+            const navBtn = document.getElementById('navAuthBtn');
+            const mobileBtn = document.getElementById('mobileAuthBtn');
+            
+            if (isLoggedIn) {
+                navBtn.textContent = 'Logout';
+                navBtn.classList.remove('gradient-bg');
+                navBtn.classList.add('bg-gradient-to-r', 'from-red-500', 'to-pink-600');
+                mobileBtn.textContent = 'Logout';
+                mobileBtn.classList.remove('text-purple-400');
+                mobileBtn.classList.add('text-red-400');
+            } else {
+                navBtn.textContent = 'Login';
+                navBtn.classList.add('gradient-bg');
+                navBtn.classList.remove('bg-gradient-to-r', 'from-red-500', 'to-pink-600');
+                mobileBtn.textContent = 'Login';
+                mobileBtn.classList.add('text-purple-400');
+                mobileBtn.classList.remove('text-red-400');
+            }
+        }
+
+        function handleAuthClick() {
+            document.getElementById('mobileMenu').classList.add('hidden');
+            if (currentUser === 'owner') {
+                logout();
+            } else {
+                openModal('loginModal');
+            }
+        }
+
         function goHome() {
             currentUser = null;
             document.getElementById('ownerDashboard').classList.add('hidden');
             document.getElementById('propertyDetailPage').classList.add('hidden');
             document.getElementById('renterSection').classList.remove('hidden');
+            updateAuthButton(false);
             window.scrollTo(0, 0);
         }
 
         function navigateTo(section) {
-            // Close mobile menu
             document.getElementById('mobileMenu').classList.add('hidden');
-            
-            // If in property detail or owner dashboard, go back to main view first
-            if (!document.getElementById('renterSection').classList.contains('hidden') === false) {
-                goHome();
-            }
-            
-            // Scroll to section
-            setTimeout(() => {
-                const element = document.getElementById(section);
-                if (element) {
-                    element.scrollIntoView({ behavior: 'smooth' });
-                }
-            }, 100);
+            if (document.getElementById('renterSection').classList.contains('hidden')) goHome();
+            setTimeout(() => document.getElementById(section)?.scrollIntoView({ behavior: 'smooth' }), 100);
         }
 
         function goBack() {
@@ -1178,98 +665,11 @@
             document.getElementById('properties').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // Login Modal Functions
-        function openLoginModal() {
-            document.getElementById('loginModal').classList.remove('hidden');
-        }
-
-        function closeLoginModal() {
-            document.getElementById('loginModal').classList.add('hidden');
-        }
-
-        // Offer Modal Functions
-        let currentOfferProperty = '';
-        
-        function openOfferModal(propertyTitle) {
-            currentOfferProperty = propertyTitle || 'a property';
-            document.getElementById('offerPropertyName').textContent = 'Contact Us About: ' + currentOfferProperty;
-            document.getElementById('offerMessage').value = `Hi! I'm interested in making an offer on ${currentOfferProperty}. Please contact me ASAP to discuss further.`;
-            document.getElementById('offerModal').classList.remove('hidden');
-            
-            // Reset button text
-            document.getElementById('copyPhoneBtn').textContent = 'Copy';
-            document.getElementById('copyMessageBtn').textContent = 'Copy Message';
-        }
-
-        function closeOfferModal() {
-            document.getElementById('offerModal').classList.add('hidden');
-        }
-        
-        function copyPhone() {
-            const phone = document.getElementById('phoneNumber').value;
-            navigator.clipboard.writeText(phone).then(() => {
-                document.getElementById('copyPhoneBtn').textContent = 'Copied!';
-                setTimeout(() => {
-                    document.getElementById('copyPhoneBtn').textContent = 'Copy';
-                }, 2000);
-            });
-        }
-        
-        function copyMessage() {
-            const message = document.getElementById('offerMessage').value;
-            navigator.clipboard.writeText(message).then(() => {
-                document.getElementById('copyMessageBtn').textContent = 'Copied!';
-                setTimeout(() => {
-                    document.getElementById('copyMessageBtn').textContent = 'Copy Message';
-                }, 2000);
-            });
-        }
-
-        // Rental Modal Functions
-        let currentRentalProperty = '';
-        
-        function openRentalModal(propertyTitle) {
-            currentRentalProperty = propertyTitle || 'a property';
-            document.getElementById('rentalPropertyName').textContent = 'Rent: ' + currentRentalProperty;
-            document.getElementById('rentalMessage').value = `Hi! I'm interested in renting ${currentRentalProperty}. Please contact me ASAP to discuss availability and next steps.`;
-            document.getElementById('rentalModal').classList.remove('hidden');
-            
-            // Reset button text
-            document.getElementById('copyRentalPhoneBtn').textContent = 'Copy';
-            document.getElementById('copyRentalMessageBtn').textContent = 'Copy Message';
-        }
-
-        function closeRentalModal() {
-            document.getElementById('rentalModal').classList.add('hidden');
-        }
-        
-        function copyRentalPhone() {
-            const phone = document.getElementById('rentalPhoneNumber').value;
-            navigator.clipboard.writeText(phone).then(() => {
-                document.getElementById('copyRentalPhoneBtn').textContent = 'Copied!';
-                setTimeout(() => {
-                    document.getElementById('copyRentalPhoneBtn').textContent = 'Copy';
-                }, 2000);
-            });
-        }
-        
-        function copyRentalMessage() {
-            const message = document.getElementById('rentalMessage').value;
-            navigator.clipboard.writeText(message).then(() => {
-                document.getElementById('copyRentalMessageBtn').textContent = 'Copied!';
-                setTimeout(() => {
-                    document.getElementById('copyRentalMessageBtn').textContent = 'Copy Message';
-                }, 2000);
-            });
-        }
-
-        // Firebase Authentication Functions
+        // Auth Functions
         function showOwnerLoginForm() {
             document.getElementById('loginOptions').classList.add('hidden');
             document.getElementById('ownerLoginForm').classList.remove('hidden');
             document.getElementById('loginError').classList.add('hidden');
-            document.getElementById('ownerEmail').value = '';
-            document.getElementById('ownerPassword').value = '';
         }
 
         function hideOwnerLoginForm() {
@@ -1277,456 +677,277 @@
             document.getElementById('loginOptions').classList.remove('hidden');
         }
 
-        // Firebase Login Form Submission
+        function loginAsRenter() {
+            currentUser = 'renter';
+            closeModal('loginModal');
+            goHome();
+        }
+
+        function logout() {
+            auth.signOut().then(goHome).catch(goHome);
+        }
+
         document.getElementById('firebaseLoginForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            
             const email = document.getElementById('ownerEmail').value;
             const password = document.getElementById('ownerPassword').value;
-            const loginBtn = document.getElementById('loginSubmitBtn');
+            const btn = document.getElementById('loginSubmitBtn');
             const errorDiv = document.getElementById('loginError');
             
-            // Disable button and show loading
-            loginBtn.disabled = true;
-            loginBtn.textContent = 'Signing In...';
+            btn.disabled = true;
+            btn.textContent = 'Signing In...';
             errorDiv.classList.add('hidden');
             
-            // Firebase Authentication
             auth.signInWithEmailAndPassword(email, password)
-                .then((userCredential) => {
-                    // Successful login
+                .then(() => {
                     currentUser = 'owner';
-                    closeLoginModal();
+                    closeModal('loginModal');
                     hideOwnerLoginForm();
                     document.getElementById('renterSection').classList.add('hidden');
                     document.getElementById('propertyDetailPage').classList.add('hidden');
                     document.getElementById('ownerDashboard').classList.remove('hidden');
+                    updateAuthButton(true);
                     renderOwnerDashboard();
                     window.scrollTo(0, 0);
-                    
-                    // Reset form
-                    loginBtn.disabled = false;
-                    loginBtn.textContent = 'Sign In';
+                    btn.disabled = false;
+                    btn.textContent = 'Sign In';
                 })
-                .catch((error) => {
-                    // Login failed
-                    let errorMessage = 'Invalid email or password. Please try again.';
-                    if (error.code === 'auth/user-not-found') {
-                        errorMessage = 'No account found with this email.';
-                    } else if (error.code === 'auth/wrong-password') {
-                        errorMessage = 'Incorrect password. Please try again.';
-                    } else if (error.code === 'auth/too-many-requests') {
-                        errorMessage = 'Too many failed attempts. Please try again later.';
-                    }
-                    
-                    errorDiv.textContent = errorMessage;
+                .catch(error => {
+                    const messages = {
+                        'auth/user-not-found': 'No account found with this email.',
+                        'auth/wrong-password': 'Incorrect password. Please try again.',
+                        'auth/too-many-requests': 'Too many failed attempts. Please try again later.'
+                    };
+                    errorDiv.textContent = messages[error.code] || 'Invalid email or password. Please try again.';
                     errorDiv.classList.remove('hidden');
-                    loginBtn.disabled = false;
-                    loginBtn.textContent = 'Sign In';
+                    btn.disabled = false;
+                    btn.textContent = 'Sign In';
                 });
         });
 
-        function loginAsRenter() {
-            currentUser = 'renter';
-            closeLoginModal();
-            document.getElementById('ownerDashboard').classList.add('hidden');
-            document.getElementById('propertyDetailPage').classList.add('hidden');
-            document.getElementById('renterSection').classList.remove('hidden');
-            window.scrollTo(0, 0);
+        // Availability Functions
+        function toggleAvailability(id) {
+            propertyAvailability[id] = !propertyAvailability[id];
+            saveToStorage('propertyAvailability', propertyAvailability);
+            renderOwnerDashboard();
+            renderProperties(filteredProperties);
         }
 
-        function logout() {
-            auth.signOut().then(() => {
-                currentUser = null;
-                goHome();
-            }).catch((error) => {
-                console.error('Logout error:', error);
-                goHome();
-            });
+        function getAvailableCount() {
+            return properties.filter(p => propertyAvailability[p.id] !== false).length;
         }
 
-        // Render Owner Dashboard
+        function calculateTotals() {
+            const weekly = properties.reduce((sum, p) => sum + p.weeklyPrice, 0);
+            const monthly = properties.reduce((sum, p) => sum + p.monthlyPrice, 0);
+            return { weekly, monthly };
+        }
+
+        // Render Functions
         function renderOwnerDashboard() {
-            const tableBody = document.getElementById('ownerPropertiesTable');
+            const totals = calculateTotals();
+            document.getElementById('weeklyIncomeDisplay').textContent = formatIncome(totals.weekly);
+            document.getElementById('monthlyIncomeDisplay').textContent = formatIncome(totals.monthly);
+            document.getElementById('unitsAvailableDisplay').textContent = `${getAvailableCount()}/${properties.length}`;
             
-            let rows = '';
-            properties.forEach(property => {
-                const isAvailable = propertyAvailability[property.id] !== false;
-                rows += `
-                    <tr class="border-b border-gray-700 hover:bg-gray-700 transition">
-                        <td class="px-6 py-4">
-                            <div class="toggle-switch ${isAvailable ? 'active' : ''}" onclick="toggleAvailability(${property.id})"></div>
-                        </td>
-                        <td class="px-6 py-4 font-bold text-gray-200">${property.title}</td>
-                        <td class="px-6 py-4 text-gray-300 capitalize">${property.type}</td>
-                        <td class="px-6 py-4 text-gray-300">${property.interiorType}</td>
-                        <td class="px-6 py-4 text-gray-300">${property.storage.toLocaleString()}</td>
-                        <td class="px-6 py-4 text-green-400 font-bold">$${property.weeklyPrice.toLocaleString()}</td>
-                        <td class="px-6 py-4 text-purple-400 font-bold">$${property.monthlyPrice.toLocaleString()}</td>
-                    </tr>
-                `;
-            });
-            
-            tableBody.innerHTML = rows;
-            updateUnitsAvailableDisplay();
+            document.getElementById('ownerPropertiesTable').innerHTML = properties.map(p => `
+                <tr class="border-b border-gray-700 hover:bg-gray-700 transition">
+                    <td class="px-6 py-4"><div class="toggle-switch ${propertyAvailability[p.id] !== false ? 'active' : ''}" onclick="toggleAvailability(${p.id})"></div></td>
+                    <td class="px-6 py-4 font-bold text-gray-200">${p.title}</td>
+                    <td class="px-6 py-4 text-gray-300 capitalize">${p.type}</td>
+                    <td class="px-6 py-4 text-gray-300">${p.interiorType}</td>
+                    <td class="px-6 py-4 text-gray-300">${p.storage.toLocaleString()}</td>
+                    <td class="px-6 py-4 text-green-400 font-bold">$${p.weeklyPrice.toLocaleString()}</td>
+                    <td class="px-6 py-4 text-purple-400 font-bold">$${p.monthlyPrice.toLocaleString()}</td>
+                </tr>
+            `).join('');
         }
 
-        // Mobile menu toggle
-        document.getElementById('menuBtn').addEventListener('click', function() {
-            const menu = document.getElementById('mobileMenu');
-            menu.classList.toggle('hidden');
-        });
-
-        // Render properties for renters
-        function renderProperties(propertiesToRender) {
-            const grid = document.getElementById('propertiesGrid');
-            grid.innerHTML = propertiesToRender.map(property => {
-                const isAvailable = propertyAvailability[property.id] !== false;
-                const unavailableOverlay = !isAvailable ? `
-                    <div class="unavailable-overlay">
-                        <div class="unavailable-text">UNAVAILABLE</div>
-                    </div>
-                ` : '';
-                
+        function renderProperties(list) {
+            document.getElementById('propertiesGrid').innerHTML = list.map(p => {
+                const isAvailable = propertyAvailability[p.id] !== false;
                 return `
-                <div class="property-card bg-gray-800 rounded-2xl shadow-xl overflow-hidden cursor-pointer border border-gray-700" onclick="viewProperty(${property.id})">
-                    <div class="carousel-container relative">
-                        ${unavailableOverlay}
-                        <img id="card-img-${property.id}" src="${property.images[0]}" alt="${property.title}" class="w-full h-72 object-cover transition duration-500">
-                        ${property.videoUrl ? '<div class="absolute top-4 left-4 bg-gradient-to-r from-red-500 to-pink-600 text-white px-4 py-2 rounded-full font-bold text-sm shadow-lg flex items-center space-x-2"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"></path></svg><span>Video Tour</span></div>' : ''}
+                <div class="property-card bg-gray-800 rounded-2xl shadow-xl overflow-hidden cursor-pointer border border-gray-700" onclick="viewProperty(${p.id})">
+                    <div class="relative">
+                        ${!isAvailable ? '<div class="unavailable-overlay"><div class="unavailable-text">UNAVAILABLE</div></div>' : ''}
+                        <img src="${p.images[0]}" alt="${p.title}" class="w-full h-72 object-cover transition duration-500">
+                        ${p.videoUrl ? '<div class="absolute top-4 left-4 bg-gradient-to-r from-red-500 to-pink-600 text-white px-4 py-2 rounded-full font-bold text-sm shadow-lg flex items-center space-x-2"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"></path></svg><span>Video Tour</span></div>' : ''}
                     </div>
                     <div class="p-6">
                         <div class="flex justify-between items-start mb-3">
-                            <h4 class="text-2xl font-bold text-white">${property.title}</h4>
-                            <span class="badge text-white text-xs font-bold px-3 py-1 rounded-full uppercase">${property.type}</span>
+                            <h4 class="text-2xl font-bold text-white">${p.title}</h4>
+                            <span class="badge text-white text-xs font-bold px-3 py-1 rounded-full uppercase">${p.type}</span>
                         </div>
-                        <p class="text-gray-300 mb-2 font-medium">📍 ${property.location}</p>
-                        <p class="text-sm text-gray-400 mb-4 font-semibold">🏠 Interior: ${property.interiorType}</p>
+                        <p class="text-gray-300 mb-2 font-medium">📍 ${p.location}</p>
+                        <p class="text-sm text-gray-400 mb-4 font-semibold">🏠 Interior: ${p.interiorType}</p>
                         <div class="grid grid-cols-3 gap-2 mb-4 text-sm text-gray-300 font-semibold">
-                            <div>🛏️ ${property.bedrooms} Beds</div>
-                            <div>🚿 ${property.bathrooms} Baths</div>
-                            <div>📦 ${property.storage.toLocaleString()}</div>
+                            <div>🛏️ ${p.bedrooms} Beds</div>
+                            <div>🚿 ${p.bathrooms} Baths</div>
+                            <div>📦 ${p.storage.toLocaleString()}</div>
                         </div>
                         <div class="mb-4 text-sm">
-                            <div class="text-gray-400 font-semibold"><span class="font-bold text-gray-300">Weekly:</span> $${property.weeklyPrice.toLocaleString()}</div>
-                            <div class="text-purple-400 font-black text-2xl mt-1">$${property.monthlyPrice.toLocaleString()}<span class="text-sm font-semibold text-gray-400">/month</span></div>
+                            <div class="text-gray-400 font-semibold"><span class="font-bold text-gray-300">Weekly:</span> $${p.weeklyPrice.toLocaleString()}</div>
+                            <div class="text-purple-400 font-black text-2xl mt-1">$${p.monthlyPrice.toLocaleString()}<span class="text-sm font-semibold text-gray-400">/month</span></div>
                         </div>
-                        <button onclick="viewProperty(${property.id})" class="w-full gradient-bg text-white px-6 py-3 rounded-xl font-bold hover:opacity-90 transition shadow-lg mb-2">View Details</button>
-                        <button onclick="event.stopPropagation(); openOfferModal('${property.title}')" class="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white px-6 py-3 rounded-xl font-bold hover:from-amber-400 hover:to-orange-500 transition shadow-lg">Make an Offer</button>
+                        <button onclick="viewProperty(${p.id})" class="w-full gradient-bg text-white px-6 py-3 rounded-xl font-bold hover:opacity-90 transition shadow-lg mb-2">View Details</button>
+                        <button onclick="event.stopPropagation(); openContactModal('offer', '${p.title}')" class="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white px-6 py-3 rounded-xl font-bold hover:opacity-90 transition shadow-lg">Make an Offer</button>
                     </div>
-                </div>
-            `}).join('');
+                </div>`;
+            }).join('');
         }
 
-        // Filter properties
+        // Filter & Sort
         function filterProperties(type) {
-            currentFilter = type;
-            
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.classList.remove('active', 'gradient-bg', 'text-white');
                 btn.classList.add('bg-gray-700', 'text-gray-200');
             });
             event.target.classList.remove('bg-gray-700', 'text-gray-200');
             event.target.classList.add('active', 'gradient-bg', 'text-white');
-
-            if (type === 'all') {
-                filteredProperties = [...properties];
-            } else {
-                filteredProperties = properties.filter(p => p.type === type);
-            }
+            filteredProperties = type === 'all' ? [...properties] : properties.filter(p => p.type === type);
             renderProperties(filteredProperties);
         }
 
-        // Sort properties
         function sortProperties() {
             const sortBy = document.getElementById('sortBy').value;
-            
-            if (sortBy === 'price-low') {
-                filteredProperties.sort((a, b) => a.monthlyPrice - b.monthlyPrice);
-            } else if (sortBy === 'price-high') {
-                filteredProperties.sort((a, b) => b.monthlyPrice - a.monthlyPrice);
-            } else if (sortBy === 'bedrooms') {
-                filteredProperties.sort((a, b) => b.bedrooms - a.bedrooms);
-            } else if (sortBy === 'interior') {
-                filteredProperties.sort((a, b) => a.interiorType.localeCompare(b.interiorType));
-            } else if (sortBy === 'storage') {
-                filteredProperties.sort((a, b) => b.storage - a.storage);
-            }
-            
+            const sorters = {
+                'price-low': (a, b) => a.monthlyPrice - b.monthlyPrice,
+                'price-high': (a, b) => b.monthlyPrice - a.monthlyPrice,
+                'bedrooms': (a, b) => b.bedrooms - a.bedrooms,
+                'interior': (a, b) => a.interiorType.localeCompare(b.interiorType),
+                'storage': (a, b) => b.storage - a.storage
+            };
+            if (sorters[sortBy]) filteredProperties.sort(sorters[sortBy]);
             renderProperties(filteredProperties);
         }
 
-        // Clear all filters
         function clearFilters() {
-            document.getElementById('searchType').value = '';
-            document.getElementById('searchInterior').value = '';
-            document.getElementById('searchPrice').value = '';
-            document.getElementById('sortBy').value = '';
-            
-            // Reset filter buttons
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.remove('active', 'gradient-bg', 'text-white');
-                btn.classList.add('bg-gray-700', 'text-gray-200');
+            ['searchType', 'searchInterior', 'searchPrice', 'sortBy'].forEach(id => document.getElementById(id).value = '');
+            document.querySelectorAll('.filter-btn').forEach((btn, i) => {
+                btn.classList.toggle('active', i === 0);
+                btn.classList.toggle('gradient-bg', i === 0);
+                btn.classList.toggle('text-white', i === 0);
+                btn.classList.toggle('bg-gray-700', i !== 0);
+                btn.classList.toggle('text-gray-200', i !== 0);
             });
-            document.querySelector('.filter-btn').classList.remove('bg-gray-700', 'text-gray-200');
-            document.querySelector('.filter-btn').classList.add('active', 'gradient-bg', 'text-white');
-            
-            currentFilter = 'all';
             filteredProperties = [...properties];
             renderProperties(filteredProperties);
         }
 
-        // Search properties
         function searchProperties() {
             const type = document.getElementById('searchType').value;
-            const interiorType = document.getElementById('searchInterior').value;
-            const priceRange = document.getElementById('searchPrice').value;
-
-            filteredProperties = properties.filter(property => {
-                let matches = true;
-
-                if (type && property.type !== type) {
-                    matches = false;
+            const interior = document.getElementById('searchInterior').value;
+            const price = document.getElementById('searchPrice').value;
+            
+            filteredProperties = properties.filter(p => {
+                if (type && p.type !== type) return false;
+                if (interior && p.interiorType !== interior) return false;
+                if (price) {
+                    const ranges = { '0-200000': [0, 200000], '200000-400000': [200000, 400000], '400000-600000': [400000, 600000], '600000+': [600000, Infinity] };
+                    const [min, max] = ranges[price];
+                    if (p.monthlyPrice < min || p.monthlyPrice > max) return false;
                 }
-
-                if (interiorType && property.interiorType !== interiorType) {
-                    matches = false;
-                }
-
-                if (priceRange) {
-                    if (priceRange === '0-200000' && property.monthlyPrice > 200000) matches = false;
-                    if (priceRange === '200000-400000' && (property.monthlyPrice < 200000 || property.monthlyPrice > 400000)) matches = false;
-                    if (priceRange === '400000-600000' && (property.monthlyPrice < 400000 || property.monthlyPrice > 600000)) matches = false;
-                    if (priceRange === '600000+' && property.monthlyPrice < 600000) matches = false;
-                }
-
-                return matches;
+                return true;
             });
-
             renderProperties(filteredProperties);
             navigateTo('properties');
         }
 
-        // View property details
+        // View Property
         function viewProperty(id) {
-            const property = properties.find(p => p.id === id);
+            const p = properties.find(prop => prop.id === id);
+            if (!p) return;
             currentPropertyId = id;
+            currentImages = p.images;
             
-            if (!property) return;
-
-            // Store images globally for lightbox access
-            currentImages = property.images;
-
             document.getElementById('renterSection').classList.add('hidden');
             document.getElementById('propertyDetailPage').classList.remove('hidden');
             
-            const content = document.getElementById('propertyDetailContent');
-            content.innerHTML = `
-                ${property.videoUrl ? `
-                    <!-- Video Tour Section -->
-                    <div class="p-6 bg-gradient-to-r from-red-900 to-pink-900 border-b border-gray-700">
-                        <div class="flex items-center space-x-3 mb-4">
-                            <svg class="w-8 h-8 text-red-500" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"></path>
-                            </svg>
-                            <h3 class="text-2xl font-black text-white">Virtual Video Tour</h3>
+            const featuresHTML = p.features ? `
+                <div class="bg-gradient-to-br from-amber-900 via-orange-900 to-red-900 p-10 rounded-3xl mb-8 border-4 border-amber-700 shadow-2xl">
+                    <h3 class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400 mb-8 flex items-center">
+                        <svg class="w-10 h-10 text-amber-400 mr-4 animate-pulse" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                        Luxury Estate Features
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        ${[{icon:'🐠',title:'500-Gallon Aquarium',desc:'Giant indoor aquarium with exotic marine life'},{icon:'🍳',title:'Outdoor Kitchen',desc:'Professional-grade outdoor cooking station'},{icon:'🏊',title:'Infinity Pool',desc:'Stunning infinity edge pool with ocean views'},{icon:'🚁',title:'Helicopter Pad',desc:'Private landing pad for ultimate convenience'}].map(f => `
+                        <div class="flex items-start space-x-4 bg-black/40 p-5 rounded-2xl shadow-lg hover:shadow-xl transition transform hover:scale-105 border border-amber-600/30">
+                            <div class="text-5xl">${f.icon}</div>
+                            <div><h4 class="text-xl font-black text-white mb-1">${f.title}</h4><p class="text-gray-300 font-medium">${f.desc}</p></div>
+                        </div>`).join('')}
+                        <div class="flex items-start space-x-4 bg-black/40 p-5 rounded-2xl shadow-lg hover:shadow-xl transition transform hover:scale-105 md:col-span-2 border border-amber-600/30">
+                            <div class="text-5xl">🛣️</div>
+                            <div><h4 class="text-xl font-black text-white mb-1">Private Driveway</h4><p class="text-gray-300 font-medium">Long, gated driveway ensuring complete privacy and exclusivity</p></div>
                         </div>
-                        <video controls autoplay muted playsinline class="w-full rounded-xl shadow-2xl border border-gray-600" poster="${property.images[0]}">
-                            <source src="${property.videoUrl}" type="video/mp4">
-                            Your browser does not support the video tag.
-                        </video>
                     </div>
-                ` : ''}
-                
-                <!-- Image Gallery -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-6">
-                    ${property.images.map((img, index) => `
-                        <img src="${img}" alt="${property.title} - Image ${index + 1}" 
-                             onclick="openLightboxAtIndex(${index})" 
-                             class="property-image-clickable w-full h-80 object-cover rounded-xl shadow-lg border border-gray-600 ${index === 0 ? 'md:col-span-2' : ''}">
-                    `).join('')}
-                </div>
+                </div>` : '';
 
-                <!-- Property Details -->
+            document.getElementById('propertyDetailContent').innerHTML = `
+                ${p.videoUrl ? `<div class="p-6 bg-gradient-to-r from-red-900 to-pink-900 border-b border-gray-700">
+                    <div class="flex items-center space-x-3 mb-4"><svg class="w-8 h-8 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"></path></svg><h3 class="text-2xl font-black text-white">Virtual Video Tour</h3></div>
+                    <video controls autoplay muted playsinline class="w-full rounded-xl shadow-2xl border border-gray-600" poster="${p.images[0]}"><source src="${p.videoUrl}" type="video/mp4">Your browser does not support the video tag.</video>
+                </div>` : ''}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-6">
+                    ${p.images.map((img, i) => `<img src="${img}" alt="${p.title} - Image ${i+1}" onclick="openLightbox(currentImages, ${i})" class="property-image-clickable w-full h-80 object-cover rounded-xl shadow-lg border border-gray-600 ${i === 0 ? 'md:col-span-2' : ''}">`).join('')}
+                </div>
                 <div class="p-8">
                     <div class="flex justify-between items-start mb-6">
-                        <div>
-                            <h2 class="text-4xl font-black text-white mb-2">${property.title}</h2>
-                            <p class="text-xl text-gray-300 font-semibold">📍 ${property.location}</p>
-                        </div>
-                        <span class="badge text-white text-sm font-bold px-4 py-2 rounded-full uppercase">${property.type}</span>
+                        <div><h2 class="text-4xl font-black text-white mb-2">${p.title}</h2><p class="text-xl text-gray-300 font-semibold">📍 ${p.location}</p></div>
+                        <span class="badge text-white text-sm font-bold px-4 py-2 rounded-full uppercase">${p.type}</span>
                     </div>
-
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-                        <div class="text-center p-4 bg-gray-700 rounded-xl border border-gray-600">
-                            <div class="text-3xl mb-2">🛏️</div>
-                            <div class="text-2xl font-bold text-white">${property.bedrooms}</div>
-                            <div class="text-sm text-gray-300 font-semibold">Bedrooms</div>
-                        </div>
-                        <div class="text-center p-4 bg-gray-700 rounded-xl border border-gray-600">
-                            <div class="text-3xl mb-2">🚿</div>
-                            <div class="text-2xl font-bold text-white">${property.bathrooms}</div>
-                            <div class="text-sm text-gray-300 font-semibold">Bathrooms</div>
-                        </div>
-                        <div class="text-center p-4 bg-gray-700 rounded-xl border border-gray-600">
-                            <div class="text-3xl mb-2">📦</div>
-                            <div class="text-2xl font-bold text-white">${property.storage.toLocaleString()}</div>
-                            <div class="text-sm text-gray-300 font-semibold">Storage</div>
-                        </div>
-                        <div class="text-center p-4 bg-gray-700 rounded-xl border border-gray-600">
-                            <div class="text-3xl mb-2">🏠</div>
-                            <div class="text-2xl font-bold text-white">${property.interiorType}</div>
-                            <div class="text-sm text-gray-300 font-semibold">Interior</div>
-                        </div>
+                        ${[{icon:'🛏️',val:p.bedrooms,label:'Bedrooms'},{icon:'🚿',val:p.bathrooms,label:'Bathrooms'},{icon:'📦',val:p.storage.toLocaleString(),label:'Storage'},{icon:'🏠',val:p.interiorType,label:'Interior'}].map(s => `
+                        <div class="text-center p-4 bg-gray-700 rounded-xl border border-gray-600"><div class="text-3xl mb-2">${s.icon}</div><div class="text-2xl font-bold text-white">${s.val}</div><div class="text-sm text-gray-300 font-semibold">${s.label}</div></div>`).join('')}
                     </div>
-
-                    ${property.features ? `
-                    <div class="bg-gradient-to-br from-amber-900 via-orange-900 to-red-900 p-10 rounded-3xl mb-8 border-4 border-amber-700 shadow-2xl">
-                        <h3 class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400 mb-8 flex items-center">
-                            <svg class="w-10 h-10 text-amber-400 mr-4 animate-pulse" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-                            </svg>
-                            Luxury Estate Features
-                        </h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="flex items-start space-x-4 bg-black bg-opacity-40 p-5 rounded-2xl shadow-lg hover:shadow-xl transition transform hover:scale-105 border border-amber-600/30">
-                                <div class="text-5xl">🐠</div>
-                                <div>
-                                    <h4 class="text-xl font-black text-white mb-1">500-Gallon Aquarium</h4>
-                                    <p class="text-gray-300 font-medium">Giant indoor aquarium with exotic marine life</p>
-                                </div>
-                            </div>
-                            <div class="flex items-start space-x-4 bg-black bg-opacity-40 p-5 rounded-2xl shadow-lg hover:shadow-xl transition transform hover:scale-105 border border-amber-600/30">
-                                <div class="text-5xl">🍳</div>
-                                <div>
-                                    <h4 class="text-xl font-black text-white mb-1">Outdoor Kitchen</h4>
-                                    <p class="text-gray-300 font-medium">Professional-grade outdoor cooking station</p>
-                                </div>
-                            </div>
-                            <div class="flex items-start space-x-4 bg-black bg-opacity-40 p-5 rounded-2xl shadow-lg hover:shadow-xl transition transform hover:scale-105 border border-amber-600/30">
-                                <div class="text-5xl">🏊</div>
-                                <div>
-                                    <h4 class="text-xl font-black text-white mb-1">Infinity Pool</h4>
-                                    <p class="text-gray-300 font-medium">Stunning infinity edge pool with ocean views</p>
-                                </div>
-                            </div>
-                            <div class="flex items-start space-x-4 bg-black bg-opacity-40 p-5 rounded-2xl shadow-lg hover:shadow-xl transition transform hover:scale-105 border border-amber-600/30">
-                                <div class="text-5xl">🚁</div>
-                                <div>
-                                    <h4 class="text-xl font-black text-white mb-1">Helicopter Pad</h4>
-                                    <p class="text-gray-300 font-medium">Private landing pad for ultimate convenience</p>
-                                </div>
-                            </div>
-                            <div class="flex items-start space-x-4 bg-black bg-opacity-40 p-5 rounded-2xl shadow-lg hover:shadow-xl transition transform hover:scale-105 md:col-span-2 border border-amber-600/30">
-                                <div class="text-5xl">🛣️</div>
-                                <div>
-                                    <h4 class="text-xl font-black text-white mb-1">Private Driveway</h4>
-                                    <p class="text-gray-300 font-medium">Long, gated driveway ensuring complete privacy and exclusivity</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    ` : ''}
-
+                    ${featuresHTML}
                     <div class="bg-gray-800 p-8 rounded-2xl mb-8 border border-gray-700">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <div class="text-gray-400 font-bold mb-2">Weekly Price</div>
-                                <div class="text-3xl font-black text-green-400">$${property.weeklyPrice.toLocaleString()}</div>
-                            </div>
-                            <div>
-                                <div class="text-gray-400 font-bold mb-2">Monthly Price (Discounted)</div>
-                                <div class="text-4xl font-black text-purple-400">$${property.monthlyPrice.toLocaleString()}</div>
-                            </div>
+                            <div><div class="text-gray-400 font-bold mb-2">Weekly Price</div><div class="text-3xl font-black text-green-400">$${p.weeklyPrice.toLocaleString()}</div></div>
+                            <div><div class="text-gray-400 font-bold mb-2">Monthly Price (Discounted)</div><div class="text-4xl font-black text-purple-400">$${p.monthlyPrice.toLocaleString()}</div></div>
                         </div>
                     </div>
-
-                    <button onclick="openRentalModal('${property.title}')" class="w-full gradient-bg text-white px-8 py-4 rounded-xl font-black text-xl hover:opacity-90 transition shadow-lg mb-4">
-                        Make an Offer to Rent
-                    </button>
-                    <button onclick="openOfferModal('${property.title}')" class="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white px-8 py-4 rounded-xl font-black text-xl hover:from-amber-400 hover:to-orange-500 transition shadow-lg">
-                        Make an Offer to Purchase
-                    </button>
-                </div>
-            `;
-
+                    <button onclick="openContactModal('rent', '${p.title}')" class="w-full gradient-bg text-white px-8 py-4 rounded-xl font-black text-xl hover:opacity-90 transition shadow-lg mb-4">Make an Offer to Rent</button>
+                    <button onclick="openContactModal('offer', '${p.title}')" class="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white px-8 py-4 rounded-xl font-black text-xl hover:opacity-90 transition shadow-lg">Make an Offer to Purchase</button>
+                </div>`;
+            
             displayReviews(id);
             window.scrollTo(0, 0);
         }
 
-        // Display reviews for a property
-        function displayReviews(propertyId) {
-            const reviewsDisplay = document.getElementById('reviewsDisplay');
-            const propertyReviews = reviews[propertyId] || [];
-
-            if (propertyReviews.length === 0) {
-                reviewsDisplay.innerHTML = '<p class="text-gray-500 text-center font-semibold">No reviews yet. Be the first to leave a review!</p>';
-                return;
-            }
-
-            reviewsDisplay.innerHTML = propertyReviews.map(review => `
+        // Reviews
+        function displayReviews(id) {
+            const propReviews = reviews[id] || [];
+            document.getElementById('reviewsDisplay').innerHTML = propReviews.length ? propReviews.map(r => `
                 <div class="review-card p-6 rounded-xl shadow-md">
                     <div class="flex justify-between items-start mb-3">
-                        <div>
-                            <h5 class="font-bold text-white text-lg">${review.name}</h5>
-                            <div class="text-yellow-400 text-xl">${'⭐'.repeat(review.rating)}</div>
-                        </div>
-                        <div class="text-sm text-gray-400 font-medium">${review.date}</div>
+                        <div><h5 class="font-bold text-white text-lg">${r.name}</h5><div class="text-yellow-400 text-xl">${'⭐'.repeat(r.rating)}</div></div>
+                        <div class="text-sm text-gray-400 font-medium">${r.date}</div>
                     </div>
-                    <p class="text-gray-300 font-medium">${review.text}</p>
-                </div>
-            `).join('');
+                    <p class="text-gray-300 font-medium">${r.text}</p>
+                </div>`).join('') : '<p class="text-gray-500 text-center font-semibold">No reviews yet. Be the first to leave a review!</p>';
         }
 
-        // Review form submission
         document.getElementById('reviewForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            
             if (!currentPropertyId) return;
-
             const review = {
                 name: document.getElementById('reviewerName').value,
                 rating: parseInt(document.getElementById('reviewRating').value),
                 text: document.getElementById('reviewText').value,
                 date: new Date().toLocaleDateString()
             };
-
-            if (!reviews[currentPropertyId]) {
-                reviews[currentPropertyId] = [];
-            }
-
+            if (!reviews[currentPropertyId]) reviews[currentPropertyId] = [];
             reviews[currentPropertyId].unshift(review);
-            saveReviews();
+            saveToStorage('propertyReviews', reviews);
             displayReviews(currentPropertyId);
-
             this.reset();
             alert('Thank you for your review!');
         });
 
-        // Contact Copy Functions
-        function copyContactPhone() {
-            const phone = document.getElementById('contactPhoneNumber').value;
-            navigator.clipboard.writeText(phone).then(() => {
-                document.getElementById('copyContactPhoneBtn').textContent = 'Copied!';
-                setTimeout(() => {
-                    document.getElementById('copyContactPhoneBtn').textContent = 'Copy';
-                }, 2000);
-            });
-        }
-        
-        function copyContactMessage() {
-            const message = document.getElementById('contactMessageText').value;
-            navigator.clipboard.writeText(message).then(() => {
-                document.getElementById('copyContactMessageBtn').textContent = 'Copied!';
-                setTimeout(() => {
-                    document.getElementById('copyContactMessageBtn').textContent = 'Copy Message';
-                }, 2000);
-            });
-        }
+        // Mobile Menu
+        document.getElementById('menuBtn').addEventListener('click', () => document.getElementById('mobileMenu').classList.toggle('hidden'));
 
         // Initialize
-        loadAvailability();
-        loadReviews();
         renderProperties(properties);
     </script>
 </body>
