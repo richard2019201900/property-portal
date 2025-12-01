@@ -199,6 +199,44 @@
         <button onclick="nextImage()" class="lightbox-btn lightbox-next">›</button>
     </div>
 
+    <!-- Rental Modal - Copy to Text -->
+    <div id="rentalModal" class="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center hidden">
+        <div class="glass-effect rounded-2xl shadow-2xl p-10 max-w-lg w-full mx-4 transform transition-all max-h-screen overflow-y-auto">
+            <h2 class="text-3xl font-black bg-gradient-to-r from-purple-500 to-blue-600 bg-clip-text text-transparent mb-4 text-center">Rent This Property</h2>
+            <p id="rentalPropertyName" class="text-xl font-bold text-gray-800 mb-4 text-center"></p>
+            <p class="text-gray-600 mb-6 text-center font-medium">Text our team directly to inquire about renting! Copy the number and message below.</p>
+            
+            <!-- Phone Number Section -->
+            <div class="mb-6">
+                <label class="block text-gray-700 font-bold mb-3">📱 Our Team's Number:</label>
+                <div class="flex items-center gap-3">
+                    <input type="text" id="rentalPhoneNumber" value="2057028233" readonly class="flex-1 px-4 py-3 border-2 border-gray-200 rounded-xl bg-gray-50 font-bold text-lg text-gray-800">
+                    <button onclick="copyRentalPhone()" id="copyRentalPhoneBtn" class="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-xl font-bold hover:opacity-90 transition shadow-lg">
+                        Copy
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Pre-written Message Section -->
+            <div class="mb-6">
+                <label class="block text-gray-700 font-bold mb-3">💬 Your Message (ready to paste):</label>
+                <textarea id="rentalMessage" readonly rows="4" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-gray-50 font-medium text-gray-800"></textarea>
+                <button onclick="copyRentalMessage()" id="copyRentalMessageBtn" class="w-full mt-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-xl font-bold hover:opacity-90 transition shadow-lg">
+                    Copy Message
+                </button>
+            </div>
+            
+            <!-- Encouragement -->
+            <div class="bg-gradient-to-r from-purple-100 to-blue-100 p-4 rounded-xl mb-6 text-center">
+                <p class="text-purple-800 font-bold">⚡ Text for the fastest response!</p>
+                <p class="text-purple-700 text-sm mt-1">Our team typically responds within minutes.</p>
+                <p class="text-gray-600 text-xs mt-2">⏰ Please allow up to 24 hours for a response during busy periods.</p>
+            </div>
+            
+            <button onclick="closeRentalModal()" class="w-full bg-gray-200 text-gray-700 px-8 py-4 rounded-xl font-bold hover:bg-gray-300 transition shadow-lg">Close</button>
+        </div>
+    </div>
+
     <!-- Offer Modal - Copy to Text -->
     <div id="offerModal" class="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center hidden">
         <div class="glass-effect rounded-2xl shadow-2xl p-10 max-w-lg w-full mx-4 transform transition-all max-h-screen overflow-y-auto">
@@ -808,7 +846,8 @@
                     "images/chumash-6502-1.png",
                     "images/chumash-6502-2.png",
                     "images/chumash-6502-3.png",
-                    "images/chumash-6502-4.png"
+                    "images/chumash-6502-4.png",
+                    "images/chumash-6502-5.png"
                 ]
             },
             {
@@ -1004,6 +1043,44 @@
                 document.getElementById('copyMessageBtn').textContent = 'Copied!';
                 setTimeout(() => {
                     document.getElementById('copyMessageBtn').textContent = 'Copy Message';
+                }, 2000);
+            });
+        }
+
+        // Rental Modal Functions
+        let currentRentalProperty = '';
+        
+        function openRentalModal(propertyTitle) {
+            currentRentalProperty = propertyTitle || 'a property';
+            document.getElementById('rentalPropertyName').textContent = 'Rent: ' + currentRentalProperty;
+            document.getElementById('rentalMessage').value = `Hi! I'm interested in renting ${currentRentalProperty}. Please contact me ASAP to discuss availability and next steps.`;
+            document.getElementById('rentalModal').classList.remove('hidden');
+            
+            // Reset button text
+            document.getElementById('copyRentalPhoneBtn').textContent = 'Copy';
+            document.getElementById('copyRentalMessageBtn').textContent = 'Copy Message';
+        }
+
+        function closeRentalModal() {
+            document.getElementById('rentalModal').classList.add('hidden');
+        }
+        
+        function copyRentalPhone() {
+            const phone = document.getElementById('rentalPhoneNumber').value;
+            navigator.clipboard.writeText(phone).then(() => {
+                document.getElementById('copyRentalPhoneBtn').textContent = 'Copied!';
+                setTimeout(() => {
+                    document.getElementById('copyRentalPhoneBtn').textContent = 'Copy';
+                }, 2000);
+            });
+        }
+        
+        function copyRentalMessage() {
+            const message = document.getElementById('rentalMessage').value;
+            navigator.clipboard.writeText(message).then(() => {
+                document.getElementById('copyRentalMessageBtn').textContent = 'Copied!';
+                setTimeout(() => {
+                    document.getElementById('copyRentalMessageBtn').textContent = 'Copy Message';
                 }, 2000);
             });
         }
@@ -1313,8 +1390,8 @@
                         </div>
                     </div>
 
-                    <button onclick="alert('Contact us at (555) 123-4567 or info@paulyspropertyhub.com to schedule a viewing!')" class="w-full gradient-bg text-white px-8 py-4 rounded-xl font-black text-xl hover:opacity-90 transition shadow-lg mb-4">
-                        Contact Us to Rent
+                    <button onclick="openRentalModal('${property.title}')" class="w-full gradient-bg text-white px-8 py-4 rounded-xl font-black text-xl hover:opacity-90 transition shadow-lg mb-4">
+                        Make an Offer to Rent
                     </button>
                     <button onclick="openOfferModal('${property.title}')" class="w-full bg-gradient-to-r from-amber-400 to-orange-500 text-gray-900 px-8 py-4 rounded-xl font-black text-xl hover:from-amber-300 hover:to-orange-400 transition shadow-lg">
                         Make an Offer to Purchase
