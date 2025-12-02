@@ -280,6 +280,24 @@
                 <p id="syncStatus" class="text-green-400 mt-2 font-medium">✓ Real-time sync enabled</p>
             </div>
 
+            <!-- Username Section -->
+            <div class="glass-effect rounded-2xl shadow-2xl p-6 md:p-8 mb-8">
+                <h3 class="text-2xl md:text-3xl font-bold text-gray-200 mb-4">Your Display Name</h3>
+                <p class="text-gray-400 mb-4 text-sm md:text-base">This name will be shown on your property listings. Your email remains private.</p>
+                <div class="flex flex-col md:flex-row gap-4">
+                    <div class="flex-1">
+                        <label for="ownerUsername" class="block text-gray-300 font-semibold mb-2">Display Name</label>
+                        <input type="text" id="ownerUsername" maxlength="30" placeholder="Enter your display name..." class="w-full px-4 py-3 border-2 border-gray-600 rounded-xl bg-gray-700 text-white focus:ring-2 focus:ring-purple-500 transition">
+                    </div>
+                    <div class="flex items-end">
+                        <button onclick="saveUsername()" id="saveUsernameBtn" class="gradient-bg text-white px-6 md:px-8 py-3 rounded-xl font-bold hover:opacity-90 transition shadow-lg">
+                            Save Name
+                        </button>
+                    </div>
+                </div>
+                <p id="usernameStatus" class="text-sm mt-3 hidden"></p>
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-12">
                 <div class="bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl shadow-2xl p-6 md:p-8 text-white transform hover:scale-105 transition border border-blue-500">
                     <div class="flex items-center justify-between mb-4">
@@ -574,6 +592,78 @@
             { id: 14, title: "6908 Great Ocean Highway", type: "house", interiorType: "Walk-in", location: "Chumash, LS", weeklyPrice: 250000, monthlyPrice: 755000, storage: 1800, bedrooms: 2, bathrooms: 2, features: true, images: ["images/great-ocean-1.png", "images/great-ocean-2.png", "images/great-ocean-3.png", "images/great-ocean-4.png"] }
         ];
 
+        // ==================== OWNER PROPERTY ASSIGNMENTS ====================
+        // Maps owner emails to their property IDs
+        const ownerPropertyMap = {
+            'richard2019201900@gmail.com': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], // All properties
+            'test@test.com': [] // No properties
+            // Add more owners here: 'email@example.com': [1, 2, 3]
+        };
+
+        // Create reverse map: propertyId → ownerEmail
+        const propertyOwnerEmail = {};
+        Object.keys(ownerPropertyMap).forEach(email => {
+            ownerPropertyMap[email].forEach(propId => {
+                propertyOwnerEmail[propId] = email;
+            });
+        });
+
+        // Cache for owner usernames
+        const ownerUsernameCache = {};
+
+        // Get owner email for a property
+        function getPropertyOwnerEmail(propertyId) {
+            return propertyOwnerEmail[propertyId] || null;
+        }
+
+        // Fetch username by email from Firestore
+        async function getUsernameByEmail(email) {
+            if (!email) return 'Property Owner';
+            
+            // Check cache first
+            if (ownerUsernameCache[email]) {
+                return ownerUsernameCache[email];
+            }
+
+            try {
+                const querySnapshot = await db.collection('users').where('email', '==', email).get();
+                if (!querySnapshot.empty) {
+                    const userData = querySnapshot.docs[0].data();
+                    const username = userData.username || 'Property Owner';
+                    ownerUsernameCache[email] = username; // Cache it
+                    return username;
+                }
+            } catch (error) {
+                console.error('Error fetching username:', error);
+            }
+            
+            return 'Property Owner';
+        }
+
+        // Get owner username for a property
+        async function getPropertyOwnerUsername(propertyId) {
+            const email = getPropertyOwnerEmail(propertyId);
+            return await getUsernameByEmail(email);
+        }
+
+        // Get properties for the current logged-in owner
+        function getOwnerProperties() {
+            const user = auth.currentUser;
+            if (!user) return [];
+            const email = user.email.toLowerCase();
+            const propertyIds = ownerPropertyMap[email] || [];
+            return properties.filter(p => propertyIds.includes(p.id));
+        }
+
+        // Check if current owner owns a specific property
+        function ownsProperty(propertyId) {
+            const user = auth.currentUser;
+            if (!user) return false;
+            const email = user.email.toLowerCase();
+            const propertyIds = ownerPropertyMap[email] || [];
+            return propertyIds.includes(propertyId);
+        }
+
         // ==================== STATE ====================
         let state = {
             filteredProperties: [...properties],
@@ -726,6 +816,62 @@
             $('properties').scrollIntoView({ behavior: 'smooth' });
         };
 
+        // ==================== USERNAME FUNCTIONS ====================
+        async function loadUsername() {
+            const user = auth.currentUser;
+            if (!user) return;
+            
+            try {
+                const doc = await db.collection('users').doc(user.uid).get();
+                if (doc.exists && doc.data().username) {
+                    $('ownerUsername').value = doc.data().username;
+                }
+            } catch (error) {
+                console.error('Error loading username:', error);
+            }
+        }
+
+        window.saveUsername = async function() {
+            const user = auth.currentUser;
+            if (!user) return;
+            
+            const username = $('ownerUsername').value.trim();
+            const btn = $('saveUsernameBtn');
+            const status = $('usernameStatus');
+            
+            if (!username) {
+                status.textContent = '⚠️ Please enter a display name';
+                status.className = 'text-yellow-400 text-sm mt-3';
+                showElement(status);
+                return;
+            }
+            
+            btn.disabled = true;
+            btn.textContent = 'Saving...';
+            
+            try {
+                await db.collection('users').doc(user.uid).set({
+                    username: username,
+                    email: user.email,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+                
+                status.textContent = '✓ Display name saved successfully!';
+                status.className = 'text-green-400 text-sm mt-3';
+                showElement(status);
+                
+                setTimeout(() => hideElement(status), 3000);
+            } catch (error) {
+                console.error('Error saving username:', error);
+                status.textContent = '⚠️ Error saving display name. Please try again.';
+                status.className = 'text-red-400 text-sm mt-3';
+                showElement(status);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Save Name';
+            }
+        };
+
         // ==================== AUTH FUNCTIONS ====================
         window.showOwnerLoginForm = function() {
             hideElement($('loginOptions'));
@@ -741,13 +887,16 @@
         window.loginAsRenter = function() {
             state.currentUser = 'renter';
             closeModal('loginModal');
-            goHome();
+            window.goHome();
         };
 
         window.logout = function() {
             state.currentUser = null;
             updateAuthButton(false);
-            auth.signOut().then(goHome).catch(goHome);
+            // Clear username field and status
+            $('ownerUsername').value = '';
+            hideElement($('usernameStatus'));
+            auth.signOut().then(() => window.goHome()).catch(() => window.goHome());
         };
 
         $('firebaseLoginForm').addEventListener('submit', function(e) {
@@ -771,6 +920,7 @@
                     showElement($('ownerDashboard'));
                     updateAuthButton(true);
                     renderOwnerDashboard();
+                    loadUsername(); // Load saved username
                     window.scrollTo(0, 0);
                 })
                 .catch(error => {
@@ -868,11 +1018,13 @@
 
         // ==================== CALCULATIONS ====================
         function getAvailableCount() {
-            return properties.filter(p => state.availability[p.id] !== false).length;
+            const ownerProps = getOwnerProperties();
+            return ownerProps.filter(p => state.availability[p.id] !== false).length;
         }
 
         function calculateTotals() {
-            return properties.reduce((acc, p) => {
+            const ownerProps = getOwnerProperties();
+            return ownerProps.reduce((acc, p) => {
                 if (state.availability[p.id] === false) {
                     acc.weekly += p.weeklyPrice;
                     acc.monthly += p.monthlyPrice;
@@ -883,25 +1035,40 @@
 
         // ==================== RENDER FUNCTIONS ====================
         function renderOwnerDashboard() {
+            const ownerProps = getOwnerProperties();
             const totals = calculateTotals();
             $('weeklyIncomeDisplay').textContent = formatPrice(totals.weekly);
             $('monthlyIncomeDisplay').textContent = formatPrice(totals.monthly);
-            $('unitsAvailableDisplay').textContent = `${getAvailableCount()}/${properties.length}`;
+            $('unitsAvailableDisplay').textContent = `${getAvailableCount()}/${ownerProps.length}`;
             
-            $('ownerPropertiesTable').innerHTML = properties.map(p => `
+            if (ownerProps.length === 0) {
+                $('ownerPropertiesTable').innerHTML = `
+                    <tr>
+                        <td colspan="7" class="px-6 py-12 text-center text-gray-400">
+                            <div class="text-4xl mb-4">🏠</div>
+                            <p class="text-xl font-semibold">No properties assigned to this account</p>
+                            <p class="text-sm mt-2">Contact the administrator to get properties assigned to your account.</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            $('ownerPropertiesTable').innerHTML = ownerProps.map(p => `
                 <tr class="border-b border-gray-700 hover:bg-gray-700 transition">
                     <td class="px-4 md:px-6 py-4"><div class="toggle-switch ${state.availability[p.id] !== false ? 'active' : ''}" onclick="toggleAvailability(${p.id})" role="switch" aria-checked="${state.availability[p.id] !== false}" tabindex="0"></div></td>
                     <td class="px-4 md:px-6 py-4 font-bold text-gray-200">${sanitize(p.title)}</td>
                     <td class="px-4 md:px-6 py-4 text-gray-300 capitalize hidden md:table-cell">${p.type}</td>
                     <td class="px-4 md:px-6 py-4 text-gray-300 hidden lg:table-cell">${p.interiorType}</td>
                     <td class="px-4 md:px-6 py-4 text-gray-300 hidden lg:table-cell">${p.storage.toLocaleString()}</td>
-                    <td class="px-4 md:px-6 py-4 text-green-400 font-bold">$${p.weeklyPrice.toLocaleString()}</td>
-                    <td class="px-4 md:px-6 py-4 text-purple-400 font-bold">$${p.monthlyPrice.toLocaleString()}</td>
+                    <td class="px-4 md:px-6 py-4 text-green-400 font-bold">${p.weeklyPrice.toLocaleString()}</td>
+                    <td class="px-4 md:px-6 py-4 text-purple-400 font-bold">${p.monthlyPrice.toLocaleString()}</td>
                 </tr>
             `).join('');
         }
 
-        function renderProperties(list) {
+        async function renderProperties(list) {
+            // First render with placeholder owner
             $('propertiesGrid').innerHTML = list.map(p => {
                 const available = state.availability[p.id] !== false;
                 return `
@@ -917,21 +1084,31 @@
                             <span class="badge text-white text-xs font-bold px-2 md:px-3 py-1 rounded-full uppercase">${p.type}</span>
                         </div>
                         <p class="text-gray-300 mb-2 font-medium text-sm md:text-base">📍 ${sanitize(p.location)}</p>
-                        <p class="text-xs md:text-sm text-gray-400 mb-4 font-semibold">🏠 Interior: ${p.interiorType}</p>
+                        <p class="text-xs md:text-sm text-gray-400 mb-2 font-semibold">🏠 Interior: ${p.interiorType}</p>
+                        <p id="owner-${p.id}" class="text-xs md:text-sm text-blue-400 mb-4 font-semibold">👤 Owner: Loading...</p>
                         <div class="grid grid-cols-3 gap-2 mb-4 text-xs md:text-sm text-gray-300 font-semibold">
                             <div>🛏️ ${p.bedrooms} Beds</div>
                             <div>🚿 ${p.bathrooms} Baths</div>
                             <div>📦 ${p.storage.toLocaleString()}</div>
                         </div>
                         <div class="mb-4">
-                            <div class="text-gray-400 font-semibold text-sm"><span class="font-bold text-gray-300">Weekly:</span> $${p.weeklyPrice.toLocaleString()}</div>
-                            <div class="text-purple-400 font-black text-xl md:text-2xl mt-1">$${p.monthlyPrice.toLocaleString()}<span class="text-xs md:text-sm font-semibold text-gray-400">/month</span></div>
+                            <div class="text-gray-400 font-semibold text-sm"><span class="font-bold text-gray-300">Weekly:</span> ${p.weeklyPrice.toLocaleString()}</div>
+                            <div class="text-purple-400 font-black text-xl md:text-2xl mt-1">${p.monthlyPrice.toLocaleString()}<span class="text-xs md:text-sm font-semibold text-gray-400">/month</span></div>
                         </div>
                         <button onclick="viewProperty(${p.id})" class="w-full gradient-bg text-white px-4 md:px-6 py-2.5 md:py-3 rounded-xl font-bold hover:opacity-90 transition shadow-lg mb-2 text-sm md:text-base">View Details</button>
                         <button onclick="event.stopPropagation(); openContactModal('offer', '${sanitize(p.title)}')" class="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white px-4 md:px-6 py-2.5 md:py-3 rounded-xl font-bold hover:opacity-90 transition shadow-lg text-sm md:text-base">Make an Offer</button>
                     </div>
                 </article>`;
             }).join('');
+            
+            // Then fetch and update owner names asynchronously
+            for (const p of list) {
+                const username = await getPropertyOwnerUsername(p.id);
+                const ownerEl = $(`owner-${p.id}`);
+                if (ownerEl) {
+                    ownerEl.textContent = `👤 Owner: ${username}`;
+                }
+            }
         }
 
         // ==================== FILTER & SORT ====================
@@ -1084,6 +1261,15 @@
                 </div>`;
             
             displayReviews(id);
+            
+            // Load and display owner username
+            getPropertyOwnerUsername(id).then(username => {
+                const ownerEl = document.querySelector('#propertyDetailContent .text-blue-400');
+                if (ownerEl) {
+                    ownerEl.textContent = `👤 Owner: ${username}`;
+                }
+            });
+            
             window.scrollTo(0, 0);
         };
 
