@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <style>
         * { font-family: 'Inter', sans-serif; }
         
@@ -121,6 +122,22 @@
         }
         .toggle-switch.active::after { left: 27px; }
 
+        /* Loading Spinner */
+        .spinner {
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         /* Scrollbar */
         ::-webkit-scrollbar { width: 10px; }
         ::-webkit-scrollbar-track { background: #111827; }
@@ -220,6 +237,7 @@
                     <a onclick="navigateTo('properties')" class="text-gray-300 hover:text-purple-400 font-semibold cursor-pointer transition">Properties</a>
                     <a onclick="navigateTo('about')" class="text-gray-300 hover:text-purple-400 font-semibold cursor-pointer transition">About</a>
                     <a onclick="navigateTo('contact')" class="text-gray-300 hover:text-purple-400 font-semibold cursor-pointer transition">Contact</a>
+                    <a id="navDashboardLink" onclick="goToDashboard()" class="hidden text-purple-400 hover:text-purple-300 font-semibold cursor-pointer transition">Dashboard</a>
                 </div>
                 <div class="flex items-center space-x-4">
                     <button id="navAuthBtn" onclick="handleAuthClick()" class="hidden md:block gradient-bg text-white px-6 py-3 rounded-xl hover:opacity-90 transition font-semibold shadow-lg">Login</button>
@@ -234,6 +252,7 @@
             <a onclick="navigateTo('properties')" class="block px-4 py-3 text-gray-300 hover:bg-gray-800 cursor-pointer">Properties</a>
             <a onclick="navigateTo('about')" class="block px-4 py-3 text-gray-300 hover:bg-gray-800 cursor-pointer">About</a>
             <a onclick="navigateTo('contact')" class="block px-4 py-3 text-gray-300 hover:bg-gray-800 cursor-pointer">Contact</a>
+            <a id="mobileDashboardLink" onclick="goToDashboard()" class="hidden block px-4 py-3 text-purple-400 hover:bg-gray-800 cursor-pointer font-semibold">Dashboard</a>
             <button id="mobileAuthBtn" onclick="handleAuthClick()" class="block w-full text-left px-4 py-3 text-purple-400 hover:bg-gray-800 font-semibold">Login</button>
         </div>
     </nav>
@@ -243,6 +262,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="mb-8">
                 <h2 class="text-5xl font-black bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">Property Owner Dashboard</h2>
+                <p id="syncStatus" class="text-green-400 mt-2 font-medium">✓ Real-time sync enabled</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
@@ -252,7 +272,7 @@
                         <svg class="w-10 h-10 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
                     <p id="weeklyIncomeDisplay" class="text-4xl md:text-5xl font-black break-words">$0</p>
-                    <p class="text-sm opacity-80 mt-3 font-medium">From all properties</p>
+                    <p class="text-sm opacity-80 mt-3 font-medium">From rented properties</p>
                 </div>
                 <div class="bg-gradient-to-br from-green-600 to-emerald-800 rounded-2xl shadow-2xl p-8 text-white transform hover:scale-105 transition border border-green-500">
                     <div class="flex items-center justify-between mb-4">
@@ -511,6 +531,7 @@
         };
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
+        const db = firebase.firestore();
 
         // Property data
         const properties = [
@@ -537,14 +558,130 @@
         let reviews = JSON.parse(localStorage.getItem('propertyReviews') || '{}');
         let currentImageIndex = 0;
         let currentImages = [];
-        let propertyAvailability = JSON.parse(localStorage.getItem('propertyAvailability') || '{}');
+        let propertyAvailability = {};
 
-        // Initialize availability defaults
-        properties.forEach(p => { if (propertyAvailability[p.id] === undefined) propertyAvailability[p.id] = true; });
+        // Initialize availability defaults (all available by default)
+        properties.forEach(p => { propertyAvailability[p.id] = true; });
+
+        // ========== FIRESTORE REAL-TIME SYNC ==========
+        
+        // Set up real-time listener for property availability
+        function setupRealtimeListener() {
+            db.collection('settings').doc('propertyAvailability')
+                .onSnapshot((doc) => {
+                    if (doc.exists) {
+                        const data = doc.data();
+                        // Update local state with Firestore data
+                        properties.forEach(p => {
+                            if (data[p.id] !== undefined) {
+                                propertyAvailability[p.id] = data[p.id];
+                            }
+                        });
+                    }
+                    // Re-render UI with updated data
+                    renderProperties(filteredProperties);
+                    if (currentUser === 'owner') {
+                        renderOwnerDashboard();
+                    }
+                    console.log('Real-time update received from Firestore');
+                }, (error) => {
+                    console.error('Firestore listener error:', error);
+                    // Fallback to localStorage if Firestore fails
+                    const stored = localStorage.getItem('propertyAvailability');
+                    if (stored) {
+                        propertyAvailability = JSON.parse(stored);
+                        renderProperties(filteredProperties);
+                    }
+                });
+        }
+
+        // Save availability to Firestore (and localStorage as backup)
+        async function saveAvailabilityToFirestore(id, isAvailable) {
+            try {
+                await db.collection('settings').doc('propertyAvailability').set({
+                    [id]: isAvailable
+                }, { merge: true });
+                
+                // Also save to localStorage as backup
+                localStorage.setItem('propertyAvailability', JSON.stringify(propertyAvailability));
+                
+                console.log(`Property ${id} availability saved to Firestore: ${isAvailable}`);
+                return true;
+            } catch (error) {
+                console.error('Error saving to Firestore:', error);
+                // Save to localStorage as fallback
+                localStorage.setItem('propertyAvailability', JSON.stringify(propertyAvailability));
+                return false;
+            }
+        }
+
+        // Toggle availability - now saves to Firestore
+        async function toggleAvailability(id) {
+            const newValue = !propertyAvailability[id];
+            propertyAvailability[id] = newValue;
+            
+            // Update UI immediately for responsiveness
+            renderOwnerDashboard();
+            renderProperties(filteredProperties);
+            
+            // Save to Firestore (this will trigger real-time updates for all users)
+            const success = await saveAvailabilityToFirestore(id, newValue);
+            
+            if (!success) {
+                // Show error notification
+                const syncStatus = document.getElementById('syncStatus');
+                if (syncStatus) {
+                    syncStatus.textContent = '⚠️ Sync error - changes saved locally';
+                    syncStatus.className = 'text-yellow-400 mt-2 font-medium';
+                    setTimeout(() => {
+                        syncStatus.textContent = '✓ Real-time sync enabled';
+                        syncStatus.className = 'text-green-400 mt-2 font-medium';
+                    }, 3000);
+                }
+            }
+        }
+
+        // Initialize Firestore data - ensure ALL properties exist in Firestore
+        async function initializeFirestoreData() {
+            try {
+                const doc = await db.collection('settings').doc('propertyAvailability').get();
+                const existingData = doc.exists ? doc.data() : {};
+                
+                // Check if any properties are missing from Firestore
+                const updates = {};
+                let needsUpdate = false;
+                
+                properties.forEach(p => {
+                    if (existingData[p.id] === undefined) {
+                        // Property not in Firestore, add it with default value (true = available)
+                        updates[p.id] = true;
+                        needsUpdate = true;
+                        console.log(`Adding missing property ${p.id} to Firestore`);
+                    }
+                });
+                
+                if (needsUpdate || !doc.exists) {
+                    // Merge new properties with existing data
+                    await db.collection('settings').doc('propertyAvailability').set(updates, { merge: true });
+                    console.log('Firestore updated with missing properties');
+                }
+                
+                // Also sync local state with Firestore data
+                properties.forEach(p => {
+                    if (existingData[p.id] !== undefined) {
+                        propertyAvailability[p.id] = existingData[p.id];
+                    }
+                });
+                
+            } catch (error) {
+                console.error('Error initializing Firestore:', error);
+            }
+        }
+
+        // ========== END FIRESTORE SYNC ==========
 
         // Utility Functions
         const formatIncome = amt => amt >= 1e6 ? `$${(amt/1e6).toFixed(1)}M` : amt >= 1e3 ? `$${(amt/1e3).toFixed(0)}k` : `$${amt.toLocaleString()}`;
-        const saveToStorage = (key, data) => localStorage.setItem(key, JSON.stringify(data));
         
         function copyToClipboard(elementId, btn) {
             const el = document.getElementById(elementId);
@@ -617,6 +754,8 @@
         function updateAuthButton(isLoggedIn) {
             const navBtn = document.getElementById('navAuthBtn');
             const mobileBtn = document.getElementById('mobileAuthBtn');
+            const navDashboard = document.getElementById('navDashboardLink');
+            const mobileDashboard = document.getElementById('mobileDashboardLink');
             
             if (isLoggedIn) {
                 navBtn.textContent = 'Logout';
@@ -625,6 +764,8 @@
                 mobileBtn.textContent = 'Logout';
                 mobileBtn.classList.remove('text-purple-400');
                 mobileBtn.classList.add('text-red-400');
+                navDashboard.classList.remove('hidden');
+                mobileDashboard.classList.remove('hidden');
             } else {
                 navBtn.textContent = 'Login';
                 navBtn.classList.add('gradient-bg');
@@ -632,6 +773,8 @@
                 mobileBtn.textContent = 'Login';
                 mobileBtn.classList.add('text-purple-400');
                 mobileBtn.classList.remove('text-red-400');
+                navDashboard.classList.add('hidden');
+                mobileDashboard.classList.add('hidden');
             }
         }
 
@@ -644,18 +787,29 @@
             }
         }
 
+        function goToDashboard() {
+            document.getElementById('mobileMenu').classList.add('hidden');
+            if (currentUser === 'owner') {
+                document.getElementById('renterSection').classList.add('hidden');
+                document.getElementById('propertyDetailPage').classList.add('hidden');
+                document.getElementById('ownerDashboard').classList.remove('hidden');
+                renderOwnerDashboard();
+                window.scrollTo(0, 0);
+            }
+        }
+
         function goHome() {
-            currentUser = null;
             document.getElementById('ownerDashboard').classList.add('hidden');
             document.getElementById('propertyDetailPage').classList.add('hidden');
             document.getElementById('renterSection').classList.remove('hidden');
-            updateAuthButton(false);
             window.scrollTo(0, 0);
         }
 
         function navigateTo(section) {
             document.getElementById('mobileMenu').classList.add('hidden');
-            if (document.getElementById('renterSection').classList.contains('hidden')) goHome();
+            document.getElementById('ownerDashboard').classList.add('hidden');
+            document.getElementById('propertyDetailPage').classList.add('hidden');
+            document.getElementById('renterSection').classList.remove('hidden');
             setTimeout(() => document.getElementById(section)?.scrollIntoView({ behavior: 'smooth' }), 100);
         }
 
@@ -684,6 +838,8 @@
         }
 
         function logout() {
+            currentUser = null;
+            updateAuthButton(false);
             auth.signOut().then(goHome).catch(goHome);
         }
 
@@ -726,20 +882,17 @@
         });
 
         // Availability Functions
-        function toggleAvailability(id) {
-            propertyAvailability[id] = !propertyAvailability[id];
-            saveToStorage('propertyAvailability', propertyAvailability);
-            renderOwnerDashboard();
-            renderProperties(filteredProperties);
-        }
-
         function getAvailableCount() {
             return properties.filter(p => propertyAvailability[p.id] !== false).length;
         }
 
         function calculateTotals() {
-            const weekly = properties.reduce((sum, p) => sum + p.weeklyPrice, 0);
-            const monthly = properties.reduce((sum, p) => sum + p.monthlyPrice, 0);
+            const weekly = properties.reduce((sum, p) => {
+                return propertyAvailability[p.id] === false ? sum + p.weeklyPrice : sum;
+            }, 0);
+            const monthly = properties.reduce((sum, p) => {
+                return propertyAvailability[p.id] === false ? sum + p.monthlyPrice : sum;
+            }, 0);
             return { weekly, monthly };
         }
 
@@ -938,7 +1091,7 @@
             };
             if (!reviews[currentPropertyId]) reviews[currentPropertyId] = [];
             reviews[currentPropertyId].unshift(review);
-            saveToStorage('propertyReviews', reviews);
+            localStorage.setItem('propertyReviews', JSON.stringify(reviews));
             displayReviews(currentPropertyId);
             this.reset();
             alert('Thank you for your review!');
@@ -948,7 +1101,19 @@
         document.getElementById('menuBtn').addEventListener('click', () => document.getElementById('mobileMenu').classList.toggle('hidden'));
 
         // Initialize
-        renderProperties(properties);
+        async function init() {
+            // Initialize Firestore data if needed
+            await initializeFirestoreData();
+            
+            // Set up real-time listener for availability changes
+            setupRealtimeListener();
+            
+            // Initial render (will be updated when Firestore data loads)
+            renderProperties(properties);
+        }
+
+        // Start the app
+        init();
     </script>
 </body>
 </html>
