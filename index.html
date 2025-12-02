@@ -3,22 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pauly's Property Portal - Find Your Dream Home</title>
-    <meta name="description" content="Premium property rentals professionally managed. Find your dream home with Pauly's Property Portal.">
+    <title>Pauly's Property Portal - Premium Real Estate Rentals in Los Santos</title>
+    <meta name="description" content="Browse 14+ premium properties in Los Santos. Luxury apartments, houses, condos & villas. Instance and Walk-in interiors. Weekly & monthly rentals available. Find your dream home today!">
     <meta name="robots" content="index, follow">
+    
+    <!-- Security -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://cdn.jsdelivr.net https://r2.fivemanage.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://firestore.googleapis.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; media-src 'self' https://r2.fivemanage.com;">
+    
+    <!-- Canonical URL - Update with your actual domain -->
+    <link rel="canonical" href="https://yoursite.com/">
+    
+    <!-- Favicons and App Icons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <meta name="theme-color" content="#667eea">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://yoursite.com/">
+    <meta property="og:title" content="Pauly's Property Portal - Premium Real Estate Rentals">
+    <meta property="og:description" content="Browse luxury properties in Los Santos. Apartments, houses, condos & villas available for rent. Instance and Walk-in interiors.">
+    <meta property="og:image" content="https://yoursite.com/images/og-image.jpg">
+    <meta property="og:site_name" content="Pauly's Property Portal">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Pauly's Property Portal - Premium Real Estate Rentals">
+    <meta name="twitter:description" content="Browse luxury properties in Los Santos. Apartments, houses, condos & villas available for rent.">
+    <meta name="twitter:image" content="https://yoursite.com/images/twitter-card.jpg">
     
     <!-- Preconnect for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="dns-prefetch" href="https://r2.fivemanage.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     
+    <!-- Preload critical first property image -->
+    <link rel="preload" as="image" href="images/eclipse-towers-1.png">
+    
     <!-- Tailwind CSS -->
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     
     <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    
+    <!-- Structured Data for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "RealEstateAgent",
+      "name": "Pauly's Property Portal",
+      "description": "Premium property rentals in Los Santos. Apartments, houses, condos and villas available for weekly and monthly rent.",
+      "url": "https://yoursite.com",
+      "telephone": "2057028233",
+      "priceRange": "$$",
+      "areaServed": {
+        "@type": "City",
+        "name": "Los Santos"
+      },
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Los Santos"
+      }
+    }
+    </script>
     
     <style>
         * { font-family: 'Inter', sans-serif; }
@@ -260,7 +314,24 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
                 <div class="flex items-center space-x-3 cursor-pointer" onclick="goHome()" role="button" tabindex="0" aria-label="Go to home">
-                    <div class="gradient-bg w-16 h-10 md:w-20 md:h-12 rounded-xl flex items-center justify-center font-black text-white text-lg md:text-xl shadow-lg">PPP</div>
+                    <div class="relative w-16 h-16 md:w-20 md:h-20">
+                        <svg viewBox="0 0 120 120" class="w-full h-full drop-shadow-lg" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="logoGradientNav" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <!-- Rounded square base -->
+                            <rect x="10" y="10" width="100" height="100" rx="20" fill="url(#logoGradientNav)" />
+                            <!-- House icon in white -->
+                            <path d="M30 55 L60 25 L90 55 L90 100 L72 100 L72 75 L48 75 L48 100 L30 100 Z" fill="white" />
+                            <!-- Door -->
+                            <rect x="54" y="85" width="12" height="15" fill="url(#logoGradientNav)" />
+                            <!-- Window -->
+                            <rect x="68" y="60" width="12" height="12" rx="2" fill="url(#logoGradientNav)" />
+                        </svg>
+                    </div>
                     <h1 class="text-lg md:text-2xl font-black bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent tracking-tight">Pauly's Property Portal</h1>
                 </div>
                 <div class="hidden md:flex space-x-8">
@@ -535,7 +606,24 @@
                 <div>
                     <h4 class="text-xl md:text-2xl font-black mb-5 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">Pauly's Property Hub</h4>
                     <p class="text-gray-400 font-medium mb-6">Your trusted partner in finding the perfect property.</p>
-                    <div onclick="goHome()" class="cursor-pointer gradient-bg w-16 h-16 md:w-20 md:h-20 rounded-2xl flex items-center justify-center font-black text-white text-2xl md:text-3xl shadow-lg hover:scale-105 transition transform" role="button" tabindex="0" aria-label="Go to home">PPP</div>
+                    <div onclick="goHome()" class="cursor-pointer relative w-24 h-24 md:w-28 md:h-28" role="button" tabindex="0" aria-label="Go to home">
+                        <svg viewBox="0 0 120 120" class="w-full h-full drop-shadow-lg" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="logoGradientFooter" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <!-- Rounded square base -->
+                            <rect x="10" y="10" width="100" height="100" rx="20" fill="url(#logoGradientFooter)" />
+                            <!-- House icon in white -->
+                            <path d="M30 55 L60 25 L90 55 L90 100 L72 100 L72 75 L48 75 L48 100 L30 100 Z" fill="white" />
+                            <!-- Door -->
+                            <rect x="54" y="85" width="12" height="15" fill="url(#logoGradientFooter)" />
+                            <!-- Window -->
+                            <rect x="68" y="60" width="12" height="12" rx="2" fill="url(#logoGradientFooter)" />
+                        </svg>
+                    </div>
                 </div>
                 <div>
                     <h4 class="text-xl md:text-2xl font-black mb-5">Quick Links</h4>
