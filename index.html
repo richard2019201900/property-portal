@@ -919,36 +919,61 @@
         // ==================== PROPERTY DATA SERVICE ====================
         /**
          * PropertyDataService - Handles all read/write operations to Firestore
+         * Uses the 'settings' collection which already has proper security rules
+         * Document: settings/propertyOverrides stores all property custom data
+         * 
          * CRITICAL: Always reads fresh data before writing to prevent stale overwrites
          * Real-time listeners ensure all subscribers get updates immediately
          */
         const PropertyDataService = {
-            // Collection reference
-            collection: 'propertyData',
+            // Use settings collection (already has write permissions)
+            collectionName: 'settings',
+            docName: 'propertyOverrides',
             
-            // Active listeners for cleanup
-            listeners: {},
+            // Active listener for cleanup
+            unsubscribeListener: null,
             
             /**
              * READ: Fetch fresh property data from Firestore
              * Never uses cached data - always hits the canonical datastore
              * @param {number} propertyId - The property ID to read
-             * @returns {Promise<Object>} - Fresh property data
+             * @returns {Promise<Object>} - Fresh property data for this property
              */
             async read(propertyId) {
                 console.log(`[PropertyDataService] READ property ${propertyId}`);
                 try {
-                    const doc = await db.collection(this.collection).doc(String(propertyId)).get();
+                    const doc = await db.collection(this.collectionName).doc(this.docName).get();
                     if (doc.exists) {
-                        const data = doc.data();
-                        console.log(`[PropertyDataService] READ success:`, data);
-                        return { exists: true, data };
+                        const allData = doc.data();
+                        const propertyData = allData[String(propertyId)] || null;
+                        console.log(`[PropertyDataService] READ success for property ${propertyId}:`, propertyData);
+                        return { exists: propertyData !== null, data: propertyData };
                     }
-                    console.log(`[PropertyDataService] READ: No custom data exists for property ${propertyId}`);
+                    console.log(`[PropertyDataService] READ: No overrides document exists yet`);
                     return { exists: false, data: null };
                 } catch (error) {
                     console.error(`[PropertyDataService] READ error:`, error);
                     throw error;
+                }
+            },
+            
+            /**
+             * READ ALL: Fetch all property overrides
+             * @returns {Promise<Object>} - All property overrides
+             */
+            async readAll() {
+                console.log(`[PropertyDataService] READ ALL`);
+                try {
+                    const doc = await db.collection(this.collectionName).doc(this.docName).get();
+                    if (doc.exists) {
+                        const data = doc.data();
+                        console.log(`[PropertyDataService] READ ALL success:`, data);
+                        return data;
+                    }
+                    return {};
+                } catch (error) {
+                    console.error(`[PropertyDataService] READ ALL error:`, error);
+                    return {};
                 }
             },
             
@@ -968,13 +993,15 @@
                 console.log(`[PropertyDataService] Fresh data before write:`, freshData);
                 
                 try {
+                    // Build the update path: propertyId.field = value
+                    const updatePath = `${propertyId}.${field}`;
                     const updateData = {
-                        [field]: value,
-                        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                        updatedBy: auth.currentUser?.email || 'unknown'
+                        [updatePath]: value,
+                        [`${propertyId}.updatedAt`]: firebase.firestore.FieldValue.serverTimestamp(),
+                        [`${propertyId}.updatedBy`]: auth.currentUser?.email || 'unknown'
                     };
                     
-                    await db.collection(this.collection).doc(String(propertyId)).set(updateData, { merge: true });
+                    await db.collection(this.collectionName).doc(this.docName).set(updateData, { merge: true });
                     console.log(`[PropertyDataService] WRITE success`);
                     
                     // Update local state cache for immediate UI consistency
@@ -991,39 +1018,41 @@
             },
             
             /**
-             * Subscribe to real-time updates for a property
+             * Subscribe to real-time updates for ALL property overrides
              * Ensures all components stay in sync with the canonical datastore
-             * @param {number} propertyId - The property ID to subscribe to
-             * @param {Function} callback - Called when data changes
+             * @param {Function} callback - Called when any data changes
              * @returns {Function} - Unsubscribe function
              */
-            subscribe(propertyId, callback) {
-                console.log(`[PropertyDataService] SUBSCRIBE to property ${propertyId}`);
+            subscribeAll(callback) {
+                console.log(`[PropertyDataService] SUBSCRIBE to all property overrides`);
                 
-                // Cleanup existing listener for this property
-                if (this.listeners[propertyId]) {
-                    this.listeners[propertyId]();
+                // Cleanup existing listener
+                if (this.unsubscribeListener) {
+                    this.unsubscribeListener();
                 }
                 
-                // Set up real-time listener
-                const unsubscribe = db.collection(this.collection).doc(String(propertyId))
+                // Set up real-time listener on the overrides document
+                this.unsubscribeListener = db.collection(this.collectionName).doc(this.docName)
                     .onSnapshot(doc => {
                         if (doc.exists) {
                             const data = doc.data();
-                            console.log(`[PropertyDataService] REALTIME UPDATE for property ${propertyId}:`, data);
+                            console.log(`[PropertyDataService] REALTIME UPDATE:`, data);
                             
-                            // Update local state
-                            state.propertyOverrides[propertyId] = data;
+                            // Update local state for all properties
+                            Object.keys(data).forEach(propId => {
+                                if (!isNaN(parseInt(propId))) {
+                                    state.propertyOverrides[propId] = data[propId];
+                                }
+                            });
                             
                             // Notify callback
-                            callback(data);
+                            if (callback) callback(data);
                         }
                     }, error => {
                         console.error(`[PropertyDataService] SUBSCRIBE error:`, error);
                     });
                 
-                this.listeners[propertyId] = unsubscribe;
-                return unsubscribe;
+                return this.unsubscribeListener;
             },
             
             /**
@@ -1043,11 +1072,13 @@
             },
             
             /**
-             * Unsubscribe from all listeners
+             * Unsubscribe from listener
              */
             cleanup() {
-                Object.values(this.listeners).forEach(unsub => unsub());
-                this.listeners = {};
+                if (this.unsubscribeListener) {
+                    this.unsubscribeListener();
+                    this.unsubscribeListener = null;
+                }
             }
         };
 
@@ -1709,11 +1740,13 @@
                 console.error('Error fetching property data:', error);
             }
             
-            // Set up real-time listener for this property
-            PropertyDataService.subscribe(id, (data) => {
+            // Set up real-time listener for all property overrides
+            PropertyDataService.subscribeAll((data) => {
                 // Re-render when data changes from another source
-                console.log('Real-time update received, refreshing stats page');
-                renderPropertyStatsContent(id);
+                if (state.currentPropertyId === id) {
+                    console.log('Real-time update received, refreshing stats page');
+                    renderPropertyStatsContent(id);
+                }
             });
             
             renderPropertyStatsContent(id);
